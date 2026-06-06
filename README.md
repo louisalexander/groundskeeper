@@ -20,7 +20,7 @@
 
 **Groundskeeper** turns a certified property survey into an interactive, georeferenced map of everything that matters in a yard — every **sprinkler head**, **plant**, and **soil/weather sensor** — placed within a foot or two of where it actually is. You survey the yard once from your phone, and Groundskeeper generates a **Home Assistant dashboard** with tappable Rachio zones and live sensor overlays, perfectly aligned to real aerial imagery of your lot.
 
-It started as a single-file tool for one property — **12009 Blairmont Court, Glen Allen, VA** (Lot 25) — and is being rebuilt as a hosted, offline-capable, multi-device web app.
+It started as a single-file tool for one residential property and is being rebuilt as a hosted, offline-capable, multi-device web app.
 
 > **Why "ground truth"?** The whole point is reconciling three sources of position — the legal **survey**, real **aerial imagery**, and field **GPS** — into one accurate map you can actually act on.
 
@@ -153,12 +153,7 @@ groundskeeper/
 
 ## 📍 Property
 
-| | |
-|--|--|
-| Address | 12009 Blairmont Court, Glen Allen, VA 23059 |
-| Lot | 25, Block B — Blairmont at Grey Oaks |
-| Survey | A.G. Harocopos & Associates, P.C. · 2026-02-16 · JN 54826 · NAD 83 |
-| Lot area | ~13,099 sq ft (0.30 acres) |
+A single ~0.30-acre (≈13,100 sq ft) residential lot, mapped from a certified boundary survey (NAD 83). The specific address and survey identifiers are intentionally kept out of this public repository.
 
 ---
 
