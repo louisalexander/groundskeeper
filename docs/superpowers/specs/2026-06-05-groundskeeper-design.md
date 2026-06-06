@@ -10,7 +10,7 @@
 ## 1. Purpose & Goals
 
 Take the existing single-file "Yard Map" Claude artifact (irrigation heads + plant
-inventory on a survey-accurate SVG of a residential property) to a hosted, multi-device,
+inventory on a survey-accurate SVG of a residential lot) to a hosted, multi-device,
 higher-accuracy web app.
 
 **Prioritized goals (from brainstorming):**
