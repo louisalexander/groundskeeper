@@ -1,6 +1,6 @@
 // test/geometry.test.js
 import { describe, it, expect } from 'vitest';
-import { bearingVec, move, corners, house, powerBox, arcPoints, frontEdgePoints } from '../src/geometry.js';
+import { bearingVec, move, corners, house, powerBox, arcPoints, frontEdgePoints, dms } from '../src/geometry.js';
 
 const close = (a, b, tol = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(tol);
 
@@ -26,8 +26,6 @@ describe('move', () => {
   });
 });
 
-// append to test/geometry.test.js
-
 const dist = (p, q) => Math.hypot(q.x - p.x, q.y - p.y);
 
 describe('corners', () => {
@@ -51,8 +49,6 @@ describe('corners', () => {
   });
 });
 
-// append to test/geometry.test.js
-
 describe('house', () => {
   const h = house();
   it('has width ≈ 56.89 ft (NW→NE)', () => {
@@ -73,8 +69,6 @@ describe('powerBox', () => {
   });
 });
 
-// append to test/geometry.test.js
-
 describe('arcPoints', () => {
   it('returns segments+1 points, starting at the start point', () => {
     const start = { x: 0, y: 0 };
@@ -90,6 +84,16 @@ describe('arcPoints', () => {
     const center = { x: 0, y: R };
     for (const p of pts) close(Math.hypot(p.x - center.x, p.y - center.y), R, 1e-6);
   });
+  it('sweeps the correct direction and radius for CCW travel', () => {
+    const start = { x: 0, y: 0 };
+    const R = 50;
+    const pts = arcPoints(start, 90, R, 90, false, 4); // east start, 90° CCW
+    const center = { x: 0, y: -R };                     // 90° left of east = north
+    for (const p of pts) close(Math.hypot(p.x - center.x, p.y - center.y), R, 1e-6);
+    const end = pts[pts.length - 1];
+    close(end.x, R, 1e-6);
+    close(end.y, -R, 1e-6);
+  });
 });
 
 describe('frontEdgePoints', () => {
@@ -100,5 +104,14 @@ describe('frontEdgePoints', () => {
     const last = pts[pts.length - 1];
     // chord(2R·sin(Δ/2)) vs survey-rounded chord differ ~0.01 ft per arc
     close(last.x, C2end.x, 0.1); close(last.y, C2end.y, 0.1);
+  });
+});
+
+describe('dms', () => {
+  it('converts degrees-minutes-seconds to decimal degrees', () => {
+    close(dms(69, 22, 51), 69 + 22 / 60 + 51 / 3600, 1e-9);
+  });
+  it('works with degrees-minutes only (no seconds)', () => {
+    close(dms(86, 18), 86.3, 1e-9);
   });
 });

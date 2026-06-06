@@ -13,8 +13,6 @@ export function move(pt, deg, distFt) {
   return { x: pt.x + v.x * distFt, y: pt.y + v.y * distFt };
 }
 
-// append to src/geometry.js
-
 // Decimal degrees for a DMS bearing, e.g. dms(69,22,51) → 69.380833…
 export function dms(d, m = 0, s = 0) {
   return d + m / 60 + s / 3600;
@@ -33,8 +31,6 @@ export function corners() {
   return { A, B, C, D, C1end, C2end };
 }
 
-// append to src/geometry.js
-
 // House footprint corners in feet (parallelogram aligned to the lot bearings).
 export function house() {
   const A = { x: 0, y: 0 };
@@ -50,8 +46,6 @@ export function powerBox() {
   return move({ x: 0, y: 0 }, 137.5, 126);
 }
 
-// append to src/geometry.js
-
 // Sample an arc into `segments`+1 points (feet).
 //  start      : {x,y} arc start
 //  bearing0   : initial travel bearing (deg) at start
@@ -60,6 +54,7 @@ export function powerBox() {
 //  cw         : true = clockwise travel, false = counter-clockwise
 //  segments   : number of straight chords to approximate the arc
 export function arcPoints(start, bearing0, R, deltaDeg, cw, segments = 24) {
+  if (segments < 1) throw new RangeError('arcPoints: segments must be >= 1');
   // Center is perpendicular to travel: 90° right (CW) or 90° left (CCW).
   const toCenterBearing = bearing0 + (cw ? 90 : -90);
   const center = move(start, toCenterBearing, R);
@@ -82,7 +77,7 @@ export function arcPoints(start, bearing0, R, deltaDeg, cw, segments = 24) {
 export function frontEdgePoints(segments = 24) {
   const { D } = corners();
   const c1 = arcPoints(D, 47.5, 40, 43.76, true, segments);    // CW, entry tangent 47.5°
-  const bearingAfterC1 = 47.5 + 43.76;                         // = 91.26°, C1 exit = C2 entry
+  const bearingAfterC1 = 47.5 + 43.76;                         // ≈ 91.26°, C1 exit bearing = C2 entry tangent
   const c2 = arcPoints(c1[c1.length - 1], bearingAfterC1, 50, 9.92, false, segments); // CCW
   return [...c1, ...c2.slice(1)]; // drop duplicate join point
 }
