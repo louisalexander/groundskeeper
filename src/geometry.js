@@ -32,3 +32,20 @@ export function corners() {
   const C2end = move(C1end, dms(86, 18), 8.65);
   return { A, B, C, D, C1end, C2end };
 }
+
+// append to src/geometry.js
+
+// House footprint corners in feet (parallelogram aligned to the lot bearings).
+export function house() {
+  const A = { x: 0, y: 0 };
+  const NW = move(move(A, 137.5, 22.7), 47.5, 22.67); // rear setback then left offset
+  const NE = move(NW, 47.5, 56.89);  // width
+  const SW = move(NW, 137.5, 59.85); // depth
+  const SE = move(NE, 137.5, 59.85);
+  return { NW, NE, SW, SE };
+}
+
+// Power Box survey marker (the GPS anchor reference) in feet.
+export function powerBox() {
+  return move({ x: 0, y: 0 }, 137.5, 126);
+}
