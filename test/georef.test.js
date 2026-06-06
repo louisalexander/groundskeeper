@@ -37,4 +37,8 @@ describe('round-trip', () => {
     const back = latLonToLocal(localToLatLon(p, cal), cal);
     close(back.x, p.x, 1e-6); close(back.y, p.y, 1e-6);
   });
+  it('maps (lat0, lon0) back to the origin', () => {
+    const p = latLonToLocal({ lat: CAL.lat0, lon: CAL.lon0 }, CAL);
+    close(p.x, 0); close(p.y, 0);
+  });
 });
