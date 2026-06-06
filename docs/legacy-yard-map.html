@@ -622,7 +622,7 @@ function buildMap(){
   add(svg,'rect',{width:SVG_W,height:SVG_H,fill:'#070a0e'});
   const sy=Math.max(oC.y,oD.y);
   add(svg,'rect',{x:0,y:sy,width:SVG_W,height:SVG_H-sy,fill:'#0c0c18'});
-  add(svg,'text',{x:SVG_W/2,y:sy+ft(12),'text-anchor':'middle',fill:'#1e2038','font-size':ft(7),'font-family':'Space Mono,monospace','font-weight':'700','letter-spacing':'0.18em'},'BLAIRMONT COURT');
+  add(svg,'text',{x:SVG_W/2,y:sy+ft(12),'text-anchor':'middle',fill:'#1e2038','font-size':ft(7),'font-family':'Space Mono,monospace','font-weight':'700','letter-spacing':'0.18em'},'CUL-DE-SAC');
 
   const c1R=40*F,c2R=50*F;
   const lotPath=`M ${p(oA)} L ${p(oB)} L ${p(oC)} L ${p(oC2)} A ${c2R},${c2R} 0 0,1 ${p(oC1)} A ${c1R},${c1R} 0 0,0 ${p(oD)} Z`;
@@ -640,7 +640,7 @@ function buildMap(){
   const hcx=(ohNW.x+ohNE.x+ohSE.x+ohSW.x)/4,hcy=(ohNW.y+ohNE.y+ohSE.y+ohSW.y)/4;
   const hAng=Math.atan2(ohSW.y-ohNW.y,ohSW.x-ohNW.x)*180/Math.PI;
   add(svg,'text',{x:hcx,y:hcy-ft(3.5),'text-anchor':'middle',fill:'#405060','font-size':ft(2.8),'font-family':'Space Mono,monospace',transform:`rotate(${hAng},${hcx},${hcy})`},'2-STORY BRICK & VINYL');
-  add(svg,'text',{x:hcx,y:hcy+ft(1),'text-anchor':'middle',fill:'#5a7090','font-size':ft(5.5),'font-family':'Space Mono,monospace','font-weight':'700',transform:`rotate(${hAng},${hcx},${hcy})`},'#12009');
+  add(svg,'text',{x:hcx,y:hcy+ft(1),'text-anchor':'middle',fill:'#5a7090','font-size':ft(5.5),'font-family':'Space Mono,monospace','font-weight':'700',transform:`rotate(${hAng},${hcx},${hcy})`},'#----');
 
   // Dim lines
   function dimL(p1,p2,lbl,side,col='#2a5a3a'){
@@ -947,7 +947,7 @@ function addZone(){const name=prompt('Zone name:',`Zone ${nextZoneId}`);if(!name
 // EXPORT
 // ═══════════════════════════════════════════════════════
 function exportJSON(){
-  const data={property:{address:'12009 Blairmont Court',lot:'25',block:'B',county:'Henrico',state:'VA',scale_px_per_ft:F,survey_date:'2026-02-16'},
+  const data={property:{address:'',lot:'25',block:'B',county:'Henrico',state:'VA',scale_px_per_ft:F,survey_date:'2026-02-16'},
     anchor:anchor?{lat:anchor.lat,lon:anchor.lon,accuracy:anchor.accuracy,reference:'Power Box — left boundary 126ft from NW corner'}:null,
     zones,
     heads:heads.map(h=>({...h,survey_ft:{east:+(h.x/F).toFixed(2),south:+(h.y/F).toFixed(2)}})),

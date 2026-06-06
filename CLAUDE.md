@@ -1,4 +1,4 @@
-# CLAUDE.md — Yard Map: 12009 Blairmont Court
+# CLAUDE.md — Yard Map
 
 This file is the authoritative context document for Claude Code working on this repository. Read it fully before making any changes.
 
@@ -6,7 +6,7 @@ This file is the authoritative context document for Claude Code working on this 
 
 ## What This Is
 
-A single-file HTML/SVG web application for mapping the irrigation system and plant inventory at **12009 Blairmont Court, Glen Allen, VA 23059**. It runs as a published Claude artifact (for persistent storage) but can also run as a standalone HTML file in any browser.
+A single-file HTML/SVG web application for mapping the irrigation system and plant inventory at **a single residential property**. It runs as a published Claude artifact (for persistent storage) but can also run as a standalone HTML file in any browser.
 
 The tool has two primary views:
 - **🗺 Map View** — desktop-oriented, shows a geometrically accurate SVG lot map with sprinkler heads and plants as interactive overlays
@@ -95,7 +95,7 @@ function mv(pt, brg, dist) {             // "move"
 | C1end | End of C1 arc | `move(D, 69.3808°, 29.81ft)` |
 | C2end | End of C2 arc | `move(C1end, 86.3°, 8.65ft)` |
 
-### Front Boundary (Blairmont Court Cul-de-sac)
+### Front Boundary (Cul-de-sac)
 The front is NOT a straight line — it's a reverse S-curve:
 ```
 D → C1 arc (R=40', Δ=43.76°, CW) → C2 arc (R=50', Δ=9.92°, CCW) → straight 57.59' → C

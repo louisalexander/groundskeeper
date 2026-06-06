@@ -1,13 +1,13 @@
 {
   "property": {
-    "address": "12009 Blairmont Court",
-    "city": "Glen Allen",
+    "address": null,
+    "city": null,
     "state": "VA",
-    "zip": "23059",
+    "zip": null,
     "county": "Henrico",
     "lot": "25",
     "block": "B",
-    "subdivision": "Blairmont at Grey Oaks",
+    "subdivision": null,
     "gpin": null,
     "fema_zone": "X",
     "fema_panel": "51087C0036D"
@@ -26,8 +26,8 @@
     "corners": {
       "A": { "name": "NW rear-left", "description": "Origin point. Rear property line meets left boundary." },
       "B": { "name": "NE rear-right", "description": "Rear property line meets right boundary." },
-      "C": { "name": "SE front-right", "description": "Right boundary meets Blairmont Court cul-de-sac." },
-      "D": { "name": "SW front-left", "description": "Left boundary meets Blairmont Court cul-de-sac arcs." }
+      "C": { "name": "SE front-right", "description": "Right boundary meets the cul-de-sac." },
+      "D": { "name": "SW front-left", "description": "Left boundary meets the cul-de-sac arcs." }
     },
     "boundaries": {
       "rear": {
@@ -59,7 +59,7 @@
         "description": "Left (west) boundary. Shared with Lot 26."
       },
       "front": {
-        "description": "Curved cul-de-sac frontage on Blairmont Court. Consists of two arcs plus a straight tangent segment.",
+        "description": "Curved cul-de-sac frontage. Consists of two arcs plus a straight tangent segment.",
         "arcs": {
           "C1": {
             "radius_ft": 40.0,
@@ -108,7 +108,7 @@
     }
   },
   "house": {
-    "address_number": 12009,
+    "address_number": null,
     "style": "2-Story Brick & Vinyl Colonial",
     "year_built": 2006,
     "builder": "Boone Homes (likely — same builder as similar homes on street)",
