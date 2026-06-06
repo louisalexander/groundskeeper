@@ -1,381 +1,188 @@
-# CLAUDE.md — Yard Map
+# CLAUDE.md
 
-This file is the authoritative context document for Claude Code working on this repository. Read it fully before making any changes.
-
----
-
-## What This Is
-
-A single-file HTML/SVG web application for mapping the irrigation system and plant inventory at **a single residential property**. It runs as a published Claude artifact (for persistent storage) but can also run as a standalone HTML file in any browser.
-
-The tool has two primary views:
-- **🗺 Map View** — desktop-oriented, shows a geometrically accurate SVG lot map with sprinkler heads and plants as interactive overlays
-- **📍 Survey View** — mobile-optimized workflow for walking the property and recording GPS positions of heads and plants
+This file provides guidance to Claude Code (claude.ai/code) when working in this repository.
 
 ---
 
-## Repository Structure
+## What this is
 
-```
-yard-map/
-├── src/
-│   └── yard-map.html          # THE ENTIRE APPLICATION — single file, self-contained
-├── data/
-│   ├── survey-geometry.json   # Survey bearings, lot dimensions, house offsets, sensor/zone config
-│   └── plant-care.json        # All 17 plant species with care instructions
-├── docs/
-│   └── survey_lot25-105.jpg   # Scanned survey plat (page 105 of closing docs)
-├── CLAUDE.md                  # This file
-└── README.md                  # User-facing documentation
-```
+**Groundskeeper** is a hosted, offline-capable web app for survey-grade yard mapping —
+irrigation heads, plants, and sensors — whose **primary purpose is generating a Home Assistant
+dashboard** (a `picture-elements` card + a rendered, georeferenced basemap with tappable Rachio
+zones and live sensor overlays).
 
-**The entire application is `src/yard-map.html`.** All CSS, JavaScript, SVG rendering, GPS logic, plant data, and storage are in this one file. There is no build step, no npm, no bundler.
+It is a ground-up rebuild of a legacy single-file Claude artifact (`docs/legacy-yard-map.html`,
+kept only as reference) into a real Vite app with pure, tested modules. It maps one residential
+property; the survey geometry is real and certified, but **no street address or owner-identifying
+metadata lives in this repo — keep it that way** (see Privacy below).
 
 ---
 
-## Running & Developing
+## ⚠️ Privacy (hard rule)
 
-There is **no build, lint, or test tooling** — it's a single static HTML file. To work on it:
+This repo and its GitHub Pages demo are **public**. **Never commit the property's street address**
+(or city/zip/subdivision/surveyor/job-number) anywhere — README, docs, specs, code, sample data,
+or commit messages. Refer to the property generically ("a residential lot", at most "Virginia").
+If you find such identifiers, scrub them from the file *and* flag that history may need purging
+(`git filter-repo`). This rule has already been enforced once via a history rewrite.
+
+---
+
+## Commands
+
+No framework; Vite + Vitest only.
 
 ```bash
-# Preview with a local server (REQUIRED for GPS — geolocation needs a secure context)
-python3 -m http.server 8000          # then open http://localhost:8000/src/yard-map.html
-
-# Quick non-GPS preview (map/plant/UI work only)
-open src/yard-map.html               # file:// works, but Survey GPS will be blocked
+npm install
+npm run dev      # dev server — use this for GPS (geolocation needs HTTPS or http://localhost)
+npm test         # Vitest unit suite (CI runs this)
+npm run test:watch
+npm run build    # production build → dist/
+npm run preview  # serve the production build
 ```
 
-- **GPS (`navigator.geolocation`) only works over HTTPS or `http://localhost`** — never from a `file://` path. Test the Survey view via the local server or the published artifact.
-- **Persistent storage (`window.storage`) only exists inside the Claude artifact iframe.** Locally it is `undefined`, so `saveData()`/`loadData()` throw and are swallowed by their try/catch — placements live only in memory for that page load. This is expected; do real persistence testing in the published artifact.
-- After editing, just reload the browser. To validate geometry changes, eyeball the SVG against `docs/survey_lot25-105.jpg` and the dimension labels rendered on the map.
+- **GPS only works over HTTPS or `http://localhost`** — never `file://`.
+- **Supabase/`window.storage` are not present in plain local dev** — sync code must degrade
+  gracefully (operate from the local cache) when they're absent.
+- Run a single test file: `npx vitest run test/geometry.test.js`.
 
 ---
 
-## The SVG Map — Geometry Rules (CRITICAL)
+## Architecture & stack
 
-The lot map is computed from **certified survey bearings and distances**. Do not guess or estimate coordinates — derive everything mathematically.
+| Concern | Choice |
+|---|---|
+| Map engine | **Leaflet** (georeferenced imagery, touch, markers) |
+| Basemap | **Bundled public-domain orthophoto** (`public/basemap/`) drawn via `L.imageOverlay`; live tiles optional/online-only |
+| Language | **Vanilla JS, ES modules** — pure, small, testable units; no framework |
+| Build/test | **Vite + Vitest** |
+| Sync + auth | **Supabase** — per-entity tables, magic-link auth, Row-Level Security |
+| Offline | **IndexedDB cache + Service Worker (PWA)** — full survey works with no signal |
+| Hosting | **Cloudflare Pages** (prod) · **GitHub Pages** (preview) |
 
-### Coordinate System
-- **Scale:** 4 px per foot (`const F = 4.0`)
-- **Y-axis:** Positive Y = South (standard SVG, y-down)
-- **X-axis:** Positive X = East
-- **Origin:** NW corner of lot (Point A) placed at canvas position after `OFF_X`/`OFF_Y` margin offset
-
-### Bearing → SVG Vector Conversion
-The actual identifiers in the source are terse — grep for these, not the descriptive names:
-
-| Concept | Real name in `yard-map.html` |
-|---------|------------------------------|
-| bearing → unit vector | `bv(deg)` |
-| move point along bearing | `mv(pt, brg, dist)` |
-| apply margin offset to a point | `o(pt)` |
-| point → `"x,y"` string | `p(pt)` |
-| create SVG element | `el(tag, attrs)` |
-| create + append SVG element | `add(parent, tag, attrs, text)` |
-| dimension line | `dimL(...)` (inner fn of `buildMap`) |
-
-```javascript
-function bv(deg) {                       // "bearingVec"
-  const r = (90 - deg) * Math.PI / 180;  // compass bearing to math angle
-  return { x: Math.cos(r), y: -Math.sin(r) };  // negate y for SVG y-down
-}
-function mv(pt, brg, dist) {             // "move"
-  const v = bv(brg);
-  return { x: pt.x + v.x * ft(dist), y: pt.y + v.y * ft(dist) };
-}
-```
-
-### Lot Corners (computed from survey)
-| Point | Description | How Computed |
-|-------|-------------|--------------|
-| A | NW rear-left | Origin `{x:0, y:0}` |
-| B | NE rear-right | `move(A, 47.5°, 92.00ft)` |
-| C | SE front-right | `move(B, 137.5°, 150.00ft)` |
-| D | SW front-left | `move(A, 137.5°, 133.47ft)` |
-| C1end | End of C1 arc | `move(D, 69.3808°, 29.81ft)` |
-| C2end | End of C2 arc | `move(C1end, 86.3°, 8.65ft)` |
-
-### Front Boundary (Cul-de-sac)
-The front is NOT a straight line — it's a reverse S-curve:
-```
-D → C1 arc (R=40', Δ=43.76°, CW) → C2 arc (R=50', Δ=9.92°, CCW) → straight 57.59' → C
-```
-**SVG path (backward traversal C→D in lot outline):**
-```javascript
-`... L ${p(oC2end)} A ${c2R},${c2R} 0 0,1 ${p(oC1end)} A ${c1R},${c1R} 0 0,0 ${p(oD)} Z`
-```
-Sweep flags are **reversed** from the forward direction because the lot path traverses backward (C→D):
-- Forward D→C: C1=sweep 1 (CW), C2=sweep 0 (CCW)
-- Backward C→D: C2=sweep 1, C1=sweep 0
-
-**Do not change arc sweep flags without re-deriving from the tangent analysis.**
-
-### House Footprint
-Computed from survey offsets:
-```javascript
-const hNW = move(move(A, 137.5°, 22.70ft), 47.5°, 22.67ft);  // rear setback then left offset
-const hNE = move(hNW, 47.5°, 56.89ft);   // width = 92 - 22.67 - 12.44
-const hSW = move(hNW, 137.5°, 59.85ft);  // depth = 133.47 - 22.70 - 50.92
-const hSE = move(hNE, 137.5°, 59.85ft);
-```
-
-### GPS Anchor Point
-The **Power Box** (square marker on survey, left boundary ~126ft from NW corner A) is the designated GPS anchor. Its SVG coordinates are:
-```javascript
-const POWBOX_RAW = move(A, 137.5°, 126ft);
-const POWBOX_SVG = o(POWBOX_RAW);  // after margin offset applied
-```
-All GPS-placed items are positioned relative to this anchor using haversine offsets.
+The design favors **small modules with one responsibility and a clean interface**. The valuable,
+hard part (survey geometry) is pure and unit-tested; UI/IO layers sit on top.
 
 ---
 
-## GPS Workflow
+## Repository structure
 
-### How It Works
-1. User stands at the Power Box → app averages 40 GPS readings (~60 sec) → stores as `anchor`
-2. User stands at each head/plant → app averages 20 GPS readings (~20 sec)
-3. App computes lat/lon delta from anchor → converts to feet using haversine → places item at `anchor.svgX + eastFt * F`
-
-### Haversine Offset
-```javascript
-function haversineOffset(lat1, lon1, lat2, lon2) {
-  const R = 20902231; // Earth radius in feet
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const latMid = ((lat1 + lat2) / 2) * Math.PI / 180;
-  return {
-    eastFt: dLon * R * Math.cos(latMid),
-    southFt: -dLat * R   // positive = south in SVG
-  };
-}
+```
+groundskeeper/
+├── index.html            # thin shell
+├── src/
+│   ├── main.js           # bootstrap / view wiring
+│   ├── geometry.js       # ✅ pure survey math (corners, house, cul-de-sac arcs) — in FEET
+│   ├── georef.js         # ✅ survey-feet ⇄ WGS84 lat/lon transform (with rotation θ)
+│   ├── map.js            # Leaflet map + georeferenced overlays + calibration   (Plan 2)
+│   ├── gps.js            # averaging, outlier rejection, confidence             (Plan 3)
+│   ├── survey.js         # field survey workflow (heads/plants/sensors)         (Plan 3)
+│   ├── store.js          # Supabase + IndexedDB offline sync                    (Plan 4)
+│   ├── ha.js             # Home Assistant export pipeline                       (Plan 5)
+│   └── ui/               # panels, pickers, HA-entity settings
+├── public/basemap/       # bundled georeferenced orthophoto + bounds
+├── data/                 # survey-geometry.json, plant-care.json (source data)
+├── test/                 # Vitest unit tests
+└── docs/
+    ├── superpowers/specs/ # design spec (authoritative)
+    ├── superpowers/plans/ # per-milestone implementation plans
+    └── legacy-yard-map.html  # the old single-file app (reference only)
 ```
 
-### GPS Accuracy
-- Raw phone GPS: 3–10m typical
-- Averaged readings reduce noise
-- **Relative accuracy** (offset from anchor) is much better than absolute — atmospheric errors cancel
-- Expected: 1–3ft relative accuracy for items surveyed in same session as anchor
-- Items marked with orange 📍 dot on map have recorded GPS coordinates
+✅ = implemented. Others land in the milestone noted.
 
 ---
 
-## Persistent Storage
+## The geometry/georef foundation (implemented — read before touching coordinates)
 
-The app uses the **Claude artifact storage API** (`window.storage`) for persistence:
+### `geometry.js` — pure survey math, in **feet**
+- Convention: a point is `{x, y}` where **x = feet east**, **y = feet south** of NW corner **A**
+  (origin). Compass **bearings are degrees clockwise from north**.
+- Exports: `bearingVec(deg)`, `move(pt, deg, distFt)`, `dms(d,m,s)`, `corners()` →
+  `{A,B,C,D,C1end,C2end}`, `house()` → `{NW,NE,SW,SE}`, `powerBox()`, `arcPoints(start, bearing0,
+  R, deltaDeg, cw, segments)`, `frontEdgePoints(segments)`.
+- Corners reproduce the certified traverse: A→B 92.00 ft, B→C 150.00 ft, A→D 133.47 ft.
+- The front boundary is a reverse-S cul-de-sac: arc C1 (R=40', Δ=43.76°, CW) → arc C2 (R=50',
+  Δ=9.92°, CCW) → straight tangent to C. **Arc entry tangents are derived from the certified
+  chord bearings** (chordBearing = entryTangent ± Δ/2): 47.5° into C1, 91.26° into C2 — *not*
+  the side-boundary bearing. Don't change these without re-deriving.
+- Lot polygon assembly (for Plan 2): `[A, B, C, C2end, ...frontEdgePoints() reversed..., D]` —
+  straight A→B→C, straight C→C2end, then the arc points back to D. The C2end→C segment is NOT
+  arc-tangent-continuous (matches the real survey); draw it as a straight line.
 
-```javascript
-const STORAGE_KEY = 'lot25-yard-map-v1';
-
-// Save (called automatically after every placement, delete, edit, anchor)
-await window.storage.set(STORAGE_KEY, JSON.stringify(data));
-
-// Load (on init)
-const result = await window.storage.get(STORAGE_KEY);
-```
-
-**Critical:** `window.storage.get()` throws (not returns null) when a key doesn't exist. Always wrap in try/catch with two separate blocks — one for the API call, one for JSON parsing:
-```javascript
-let result;
-try {
-  result = await window.storage.get(STORAGE_KEY);
-} catch(e) {
-  // Key doesn't exist yet — treat as no data
-  return;
-}
-try {
-  const data = JSON.parse(result.value);
-  // ... restore state
-} catch(e) {
-  // JSON parse error
-}
-```
-
-**Also critical:** `prompt()` is **blocked in the Claude artifact iframe**. Use inline DOM inputs instead (see `renameZone()` for the correct pattern). ⚠️ **Known bug:** `addZone()` still calls `prompt()` — adding a custom zone silently fails in the artifact. It needs converting to the inline-input pattern; don't copy it.
+### `georef.js` — survey-feet ⇄ WGS84 lat/lon
+- Calibration is `{lat0, lon0, theta}` (theta in **radians**). `localToLatLon(pt, cal)` /
+  `latLonToLocal(ll, cal)` are exact inverses (rotation transpose); `FT_PER_DEG_LAT = 364000`
+  (feet per degree latitude; longitude is scaled by `cos(lat0)` — applied in the functions).
+- **Canonical coordinates are lat/lon** (imagery-aligned, GPS-native). Feet/px are derived for
+  display via `latLonToLocal`.
+- The calibration `{lat0, lon0, theta}` is **solved once** by the user dragging/rotating the
+  survey outline onto the orthophoto (align-by-imagery) — this calibration *solver* lives with the
+  Plan 2 map UI, not in `georef.js`.
 
 ---
 
-## Data Model
+## Data model (target — built across Plans 3–5)
 
-### Heads (sprinkler heads)
-```javascript
-{
-  id: Number,           // auto-increment
-  x: Number,           // SVG x coordinate (px)
-  y: Number,           // SVG y coordinate (px)
-  zoneId: Number,       // references zones[].id (1-6)
-  type: String,         // 'Rotor'|'Fixed Spray'|'Drip'|'MP Rotator'|'Bubbler'
-  radius: Number,       // spray radius in feet (shown as dashed circle on map)
-  label: String,        // e.g. 'Z1-H3' (Zone 1, Head 3)
-  gps: { lat, lon, acc } | null,  // acc = accuracy in meters
-  notes: String
-}
+Per-entity, lat/lon canonical, each row with `updatedAt` + `deletedAt` (soft-delete tombstones
+for correct offline multi-device sync):
+
+```
+calibration: { lat0, lon0, theta, method, updatedAt }
+zone:   { id, name, color, haEntity, updatedAt, deletedAt }
+head:   { id, lat, lon, zoneId, type, radiusFt, label, notes, gps, placedBy, confidenceFt, updatedAt, deletedAt }
+plant:  { id, lat, lon, typeId, label, notes, updatedAt, deletedAt }
+sensor: { id, lat, lon, kind:'soil|weather|other', label, haEntity, notes, placedBy, confidenceFt, gps, updatedAt, deletedAt }
 ```
 
-### Plants
-```javascript
-{
-  id: Number,
-  x: Number,           // SVG x coordinate
-  y: Number,           // SVG y coordinate
-  typeId: String,       // references PLANT_TYPES[].id (e.g. 'JML', 'AHY')
-  label: String,        // e.g. 'JML-2'
-  gps: { lat, lon, acc } | null,
-  notes: String
-}
-```
-
-### Zones
-```javascript
-{ id: Number, name: String, color: String }  // 6 built-in, user can add more
-```
-
-### Anchor
-```javascript
-{
-  lat: Number,
-  lon: Number,
-  accuracy: Number,   // meters
-  svgX: Number,       // always = POWBOX_SVG.x
-  svgY: Number        // always = POWBOX_SVG.y
-}
-```
+Supabase tables `heads/plants/sensors/zones/settings`, each row `user_id`-scoped via RLS
+(single owner, multi-device). Last-write-wins per row by `updatedAt`.
 
 ---
 
-## Plant Types
+## Workflow & process
 
-17 species defined in `PLANT_TYPES` array. Full care data in `data/plant-care.json`. Each type:
-```javascript
-{
-  id: String,      // e.g. 'JML'
-  name: String,    // full name
-  emoji: String,
-  color: String,   // hex color for map rendering
-  abbr: String,    // 3-letter abbreviation for labels
-  care: String,    // brief care note (shown in right panel)
-  warn: String,    // warning (shown in orange box)
-  prune: String    // pruning timing
-}
-```
+Work is **plan-driven** using the superpowers skills:
+**brainstorm → spec → milestone plan → subagent-driven execution (TDD, two-stage review)**.
 
-Plants render as **hexagons** on the map (vs circles for heads). Orange 📍 dot indicates GPS-recorded position.
+- Authoritative design: `docs/superpowers/specs/2026-06-05-groundskeeper-design.md`.
+- Per-milestone plans: `docs/superpowers/plans/`.
+- Roadmap: **1 Foundation ✅ · 2 Map view · 3 Survey+GPS · 4 Sync/auth/offline · 5 HA export ·
+  6 Deploy.**
+- Each milestone is independently shippable and must keep `npm test` + `npm run build` green.
+
+When you finish substantive work, **update `README.md`** in the same change (roadmap statuses,
+structure tree, features, commands) — it backs the public repo page and the Pages demo.
 
 ---
 
-## Irrigation & Sensor Integration
+## Testing conventions
 
-### Rachio (6 zones)
-| Zone ID | Default Name | HA Entity |
-|---------|-------------|-----------|
-| 1 | Front | `switch.rachio_zone_1` |
-| 2 | Left Side | `switch.rachio_zone_2` |
-| 3 | Right Side | `switch.rachio_zone_3` |
-| 4 | Rear Left | `switch.rachio_zone_4` |
-| 5 | Rear Right | `switch.rachio_zone_5` |
-| 6 | Drip/Garden | `switch.rachio_zone_6` |
-
-*Zone names are user-editable in the app. Verify actual HA entity IDs in Developer Tools → States.*
-
-### Ecowitt WS90
-- `sensor.ecowitt_ws90_rain_rate`
-- `sensor.ecowitt_ws90_temperature`
-- `sensor.ecowitt_ws90_wind_speed`
-
-### THIRDREALITY Soil Moisture Sensors
-- Zigbee protocol (Zigbee2MQTT or ZHA)
-- Entity pattern: `sensor.soil_moisture_*`
-- Planned: front yard (Zone 1) and rear (Zone 4/5)
-
-### Weather Underground
-- Also integrated for weather data
+- Pure modules get **real** Vitest unit tests (computed values, round-trips, invariants) — not
+  mocks/tautologies. See `test/geometry.test.js`, `test/georef.test.js`.
+- Follow TDD: write the failing test, confirm it fails for the right reason, implement minimally,
+  confirm green, commit.
+- Don't loosen a tolerance to make a geometry test pass — re-derive from the survey.
 
 ---
 
-## Home Assistant Export
+## GitHub / CI
 
-The **"⬇ HA"** button generates a `picture-elements` card YAML:
-- Background: `/local/lot25-yard.svg` (user must export SVG and place in HA www folder)
-- Rachio zone badges positioned at each head's % position in the SVG
-- WS90 weather sensor overlays
-- Soil moisture sensor overlays
-
----
-
-## UI Structure
-
-```
-header (title + export buttons)
-view-bar (🗺 MAP | 📍 SURVEY tabs)
-
-MAP VIEW:
-  sidebar (Zones | Plants | List tabs)
-  layer-bar (toggle heads/plants/anchor layers + pan/select mode)
-  map-container (SVG canvas, zoom controls)
-  right-panel (selected item details + GPS anchor info + stats)
-
-SURVEY VIEW:
-  Step 1: GPS Anchor (average 40 readings at Power Box)
-  Step 2: What to Place (sprinkler head → zone picker | plant → species picker)
-  Step 3: Record Position (average 20 readings or manual lat/lon entry)
-  Recent Placements log
-
-status-bar (heads count, plants count, anchor status, save status, coordinates)
-```
+- **CI** (`.github/workflows/ci.yml`): `npm ci` + Vitest + Vite build on push/PR.
+- **Pages** (`pages.yml`): builds with `--base=/groundskeeper/` and deploys the preview.
+- **Deploy** (`deploy.yml`): Cloudflare Pages; a no-op until `CLOUDFLARE_*` / `VITE_SUPABASE_*`
+  secrets exist.
+- **Dependabot**: weekly; **major bumps of `vite`/`vitest` are intentionally ignored** (they're
+  peer-locked and need a deliberate, tested migration — don't accept auto-PRs for them).
+- `main` has branch protection (no force-push / no deletion); PRs are not required, so per-task
+  commits can land directly during plan execution.
 
 ---
 
-## Key Rendering Functions
+## Gotchas
 
-| Function | Purpose |
-|----------|---------|
-| `buildMap()` | Draws the base lot SVG (lot boundary, grid, house, dim lines, markers, compass) |
-| `renderItems()` | Redraws all heads and plants on top of base map |
-| `renderHeads()` | Draws head circles with zone colors and spray radius rings |
-| `renderPlants()` | Draws plant hexagons with emoji and species colors |
-| `renderAnchor()` | Draws anchor indicator at Power Box |
-| `dimL()` | Draws a dimension line with rotated label parallel to the measured edge (defined inside `buildMap`) |
-
----
-
-## Common Tasks for Claude Code
-
-### Add a new plant species
-1. Add entry to `PLANT_TYPES` array in `src/yard-map.html`
-2. Add matching entry to `data/plant-care.json`
-3. Choose a unique `id` (3-letter abbr), `color` (hex), and `emoji`
-
-### Change the map scale
-Change `const F = 4.0` — everything derives from this. SVG_W and SVG_H will auto-resize.
-
-### Add a new sensor overlay to HA export
-Find the `exportHA()` function and add a new `state-label` element to the YAML string.
-
-### Fix storage issues
-- Always use two try/catch blocks (API call separate from JSON parse)
-- `prompt()` is blocked — use inline DOM input pattern from `renameZone()`
-- `localStorage` and `sessionStorage` do NOT work in Claude artifacts — use `window.storage` only
-
-### Add a new irrigation zone
-Zones are user-addable via the "+ Add Zone" button. Default 6 zones are hardcoded; custom zones are serialized to storage. Zone colors cycle through `ZONE_COLORS` array.
-
----
-
-## Property Context for HA Automations
-
-### Suggested Automation Logic
-1. **Rain skip:** `sensor.ecowitt_ws90_rain_rate > 0.1` OR WU forecast → pause Rachio
-2. **Soil gate:** `sensor.soil_moisture_front > 60%` → skip Zone 1
-3. **Dogwood drought alert:** no rain 3+ days AND temp > 85°F → notify (dogwood is most drought-sensitive)
-4. **Wind hold:** `sensor.ecowitt_ws90_wind_speed > 15mph` → pause active zones
-5. **Japanese beetle season:** June 1–July 31 → weekly notification to check Knockout Roses
-6. **Rootstock reminder:** April–September → monthly check Japanese Maples for green shoots
-7. **Bigleaf Hydrangea guard:** Never allow pruning reminder in fall/winter/spring (blooms on old wood)
-
-### Physical Property Notes
-- Backyard is shallow (~23ft) — largely garage + brick patio
-- Front yard is ~51ft deep
-- Left side yard: 22.67ft wide (driveway side)
-- Right side yard: 12.44ft wide (Lot 24 side)
-- Dogwood is the most drought-sensitive plant — prioritize in dry spells
-- Nandina is invasive in VA and toxic to birds — homeowner aware, considering replacement
-- Both Japanese Maples have rootstock issues requiring monthly inspection Apr–Sep
+- `geometry.js` is in **feet**; rendering/GPS go through `georef.js` to lat/lon. Don't mix units.
+- The legacy app used pixels (`F = 4 px/ft`) and `window.storage`; that's reference only — the
+  new app is lat/lon + Supabase/IndexedDB.
+- Keep files small and single-purpose; if one grows unwieldy while you work in it, a focused split
+  is reasonable (note it).
