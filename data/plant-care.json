@@ -1,0 +1,346 @@
+{
+  "property": "a residential property",
+  "region": "Central Virginia (USDA zone 7b)",
+  "source": "Yard Care Guide (homeowner document)",
+  "plants": [
+    {
+      "id": "JML",
+      "name": "Japanese Maple (Red Laceleaf)",
+      "scientific": "Acer palmatum dissectum",
+      "emoji": "🍁",
+      "color": "#c0392b",
+      "locations": ["front yard specimen", "back yard"],
+      "watering": "Water during 10+ day dry spells. Not drought tolerant when young.",
+      "fertilizing": "Light balanced fertilizer in spring only. Less is more.",
+      "pruning": "Late winter only — remove dead or crossing branches. Minimal intervention.",
+      "seasonal": {
+        "spring": "Watch for rootstock green shoots — remove immediately at the base.",
+        "summer": "Monitor for stress. Remove any green rootstock shoots monthly Apr-Sep.",
+        "fall": "Enjoy fall color. No pruning.",
+        "winter": "Prune if needed in late winter while dormant."
+      },
+      "warnings": [
+        "Front yard specimen has a rootstock issue — inspect monthly April through September and remove ALL green shoots from the base immediately. The rootstock will overtake the desirable purple variety if not controlled.",
+        "Never prune in summer — risk of bleeding and stress."
+      ],
+      "notes": "Two specimens on property — front yard (rootstock issue documented) and back yard."
+    },
+    {
+      "id": "AHY",
+      "name": "Annabelle Hydrangea",
+      "scientific": "Hydrangea arborescens 'Annabelle'",
+      "emoji": "🤍",
+      "color": "#bdc3c7",
+      "watering": "Water deeply during summer. Wilts dramatically in heat — this is normal but water if wilting persists into evening.",
+      "fertilizing": "Balanced slow-release in spring.",
+      "pruning": "Cut back HARD to 12-18 inches in late February or March. Blooms on NEW wood so aggressive pruning = more blooms.",
+      "seasonal": {
+        "spring": "New growth emerges. Apply fertilizer.",
+        "summer": "Blooms July-August. May need staking when in full bloom. Water during heat.",
+        "fall": "Leave seed heads for winter interest. Do not prune.",
+        "winter": "Prune late Feb/early March before new growth."
+      },
+      "warnings": [
+        "Wilts dramatically in afternoon heat — this looks alarming but is usually fine. Check in the evening; if still wilted, water deeply.",
+        "May need staking when in full bloom as flower heads are heavy."
+      ]
+    },
+    {
+      "id": "BHY",
+      "name": "Bigleaf Hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "emoji": "💜",
+      "color": "#8e44ad",
+      "watering": "Water 3x per week in summer. Afternoon shade helps. Most water-demanding hydrangea.",
+      "fertilizing": "Acidic fertilizer (Espoma HollyTone or similar). Soil pH 5.5-6.5 for blue blooms; pH 6.5+ turns blooms pink.",
+      "pruning": "ONLY prune immediately after summer blooming finishes. NEVER in fall, winter, or spring — blooms on OLD wood and pruning at wrong time eliminates next year's flowers.",
+      "seasonal": {
+        "spring": "DO NOT PRUNE. Buds are forming on old wood. Fertilize.",
+        "summer": "Blooms. Prune only after flowers fade.",
+        "fall": "DO NOT PRUNE. Leave alone.",
+        "winter": "DO NOT PRUNE. Leave alone."
+      },
+      "warnings": [
+        "CRITICAL: Blooms only on OLD wood. Pruning at ANY time other than immediately after summer bloom will eliminate next year's flowers entirely.",
+        "Most commonly killed by well-meaning pruning in fall or spring."
+      ]
+    },
+    {
+      "id": "KOR",
+      "name": "Double Knockout Rose",
+      "scientific": "Rosa 'Radtko'",
+      "emoji": "🌹",
+      "color": "#e74c3c",
+      "watering": "Regular watering. Drip irrigation ideal. Avoid wetting foliage.",
+      "fertilizing": "Rose-specific fertilizer (Espoma Rose-tone) every 4-6 weeks spring through August. Stop fertilizing by August 15.",
+      "pruning": "Late February or early March — cut back by about 1/3. Remove any dead or crossing canes.",
+      "seasonal": {
+        "spring": "Prune late Feb/March. Apply fertilizer as new growth emerges.",
+        "summer": "Deadhead spent blooms for continuous reblooming. Watch for Japanese beetles June-July.",
+        "fall": "Stop fertilizing. Light cleanup only.",
+        "winter": "Leave alone until late February."
+      },
+      "warnings": [
+        "Japanese beetles are a serious pest June through July. Handpick in early morning when they're sluggish, or use neem oil spray. Avoid Japanese beetle traps — they attract more than they catch.",
+        "Black spot fungal disease — treat with fungicide if spotted; improve air circulation."
+      ]
+    },
+    {
+      "id": "AZA",
+      "name": "Azalea (Robin Hill type)",
+      "scientific": "Rhododendron 'Robin Hill'",
+      "emoji": "🌸",
+      "color": "#fd79a8",
+      "watering": "Moderate, consistent moisture. Good drainage essential. Shallow roots — mulch heavily.",
+      "fertilizing": "Acidic fertilizer (HollyTone) in spring, right after blooming.",
+      "pruning": "ONLY within 3 weeks of bloom finishing in spring. NEVER prune in fall or late summer.",
+      "seasonal": {
+        "spring": "Blooms April-May. Prune within 3 weeks of bloom end if needed.",
+        "summer": "Leave alone. Buds forming for next year.",
+        "fall": "DO NOT PRUNE.",
+        "winter": "DO NOT PRUNE."
+      },
+      "warnings": [
+        "Pruning window is critical: only within 3 weeks of the last bloom in spring. After that, next year's buds begin forming on old wood.",
+        "Soil pH must be 4.5-6.0. Test soil if blooming declines."
+      ]
+    },
+    {
+      "id": "RHO",
+      "name": "Rhododendron",
+      "scientific": "Rhododendron catawbiense hybrid",
+      "emoji": "🌸",
+      "color": "#a29bfe",
+      "watering": "Keep consistently moist but not waterlogged. Morning sun and afternoon shade ideal.",
+      "fertilizing": "Acidic fertilizer in spring after blooming.",
+      "pruning": "Right after spring bloom only. Deadhead spent flower clusters.",
+      "seasonal": {
+        "spring": "Blooms. Deadhead after bloom. Prune lightly if needed.",
+        "summer": "Keep moist. Mulch to retain moisture.",
+        "fall": "Leave alone.",
+        "winter": "May need anti-desiccant spray in harsh winters."
+      },
+      "warnings": [
+        "Same old-wood blooming rules as azalea — only prune immediately after spring bloom.",
+        "Toxic to pets if ingested."
+      ]
+    },
+    {
+      "id": "CRM",
+      "name": "Crape Myrtle",
+      "scientific": "Lagerstroemia indica",
+      "emoji": "🌳",
+      "color": "#e17055",
+      "watering": "Drought tolerant once established. Water only during extended dry spells (10+ days).",
+      "fertilizing": "Light fertilizer in spring. Over-fertilizing produces foliage over flowers.",
+      "pruning": "Late winter — remove suckers from base, crossing branches, and seed heads from prior year. NEVER top.",
+      "seasonal": {
+        "spring": "New growth. Light pruning and cleanup.",
+        "summer": "Blooms June-September. Deadhead for second flush.",
+        "fall": "Seed heads. Leave for winter interest or remove.",
+        "winter": "Prune in late winter while dormant."
+      },
+      "warnings": [
+        "NEVER 'top' a crape myrtle (cutting the main trunks to stubs). This is called 'crape murder' and permanently disfigures the tree. Only remove suckers, crossing branches, and last year's seed pods.",
+        "Very large specimen on property — do not attempt heavy pruning without professional help."
+      ]
+    },
+    {
+      "id": "JMG",
+      "name": "Japanese Maple (Grafted)",
+      "scientific": "Acer palmatum (grafted cultivar)",
+      "emoji": "🍁",
+      "color": "#d35400",
+      "watering": "Same as laceleaf — water during extended dry spells.",
+      "fertilizing": "Light balanced fertilizer spring only.",
+      "pruning": "Late winter, minimal — dead or crossing branches only.",
+      "seasonal": {
+        "spring": "Inspect monthly for rootstock green shoots.",
+        "summer": "Continue monthly rootstock inspections April-September.",
+        "fall": "Fall color. No pruning.",
+        "winter": "Prune if needed in late February."
+      },
+      "warnings": [
+        "Rootstock issue: inspect base monthly April through September. Remove ALL green shoots from the graft union immediately — the vigorous green rootstock will completely overtake the desirable purple-leafed variety within a season if not controlled."
+      ]
+    },
+    {
+      "id": "LIG",
+      "name": "Ligustrum / Privet Hedge",
+      "scientific": "Ligustrum japonicum",
+      "emoji": "🌿",
+      "color": "#27ae60",
+      "watering": "Very drought tolerant. Minimal irrigation needed once established.",
+      "fertilizing": "Not needed. Over-fertilizing causes excessive growth requiring more trimming.",
+      "pruning": "Trim 2-3 times per season: late spring (after new growth hardens), midsummer, and early fall. STOP pruning by September to allow hardening before frost.",
+      "seasonal": {
+        "spring": "First trim after new growth hardens — late May.",
+        "summer": "Second trim midsummer as needed.",
+        "fall": "Final trim no later than early September.",
+        "winter": "Leave alone."
+      },
+      "warnings": [
+        "Stop trimming by September — late trimming stimulates tender new growth that will be damaged by frost."
+      ]
+    },
+    {
+      "id": "EUO",
+      "name": "Euonymus / Japanese Holly Hedge",
+      "scientific": "Euonymus japonicus / Ilex crenata",
+      "emoji": "🌿",
+      "color": "#2ecc71",
+      "watering": "Drought tolerant once established.",
+      "fertilizing": "Light balanced fertilizer in spring.",
+      "pruning": "Same schedule as Ligustrum — 3 times per season, stop by September.",
+      "seasonal": {
+        "spring": "Inspect for scale insects on stems.",
+        "summer": "Trim as needed. Continue scale monitoring.",
+        "fall": "Final trim by September. Treat scale if present.",
+        "winter": "Leave alone."
+      },
+      "warnings": [
+        "Scale insects are a significant pest — look for waxy, bumpy coating on stems. Treat with horticultural oil in late winter or early spring before new growth, and again in early summer if needed."
+      ]
+    },
+    {
+      "id": "NHS",
+      "name": "Nellie Stevens Holly",
+      "scientific": "Ilex x 'Nellie R. Stevens'",
+      "emoji": "🌲",
+      "color": "#1abc9c",
+      "watering": "Very drought tolerant once established.",
+      "fertilizing": "Acidic fertilizer (HollyTone) in spring.",
+      "pruning": "Late February or early March. Maintain natural pyramid form — avoid shearing into unnatural shapes.",
+      "seasonal": {
+        "spring": "Light pruning if needed. Red berries from prior season visible.",
+        "summer": "Very low maintenance.",
+        "fall": "Berries develop.",
+        "winter": "Red berries. Prune in late winter."
+      },
+      "warnings": [
+        "Large specimen on property — consider having a certified arborist assess periodically for structural issues.",
+        "Berries toxic if ingested in large quantities."
+      ]
+    },
+    {
+      "id": "MAP",
+      "name": "Sugar/Red Maple",
+      "scientific": "Acer saccharum / Acer rubrum",
+      "emoji": "🍂",
+      "color": "#e67e22",
+      "watering": "Drought tolerant. Keep mowers and string trimmers away from trunk — bark damage is a leading cause of decline.",
+      "fertilizing": "Not needed for established trees.",
+      "pruning": "Late winter while fully dormant. HIRE A CERTIFIED ARBORIST for any significant pruning.",
+      "seasonal": {
+        "spring": "Watch for Verticillium wilt (sudden wilting of branches).",
+        "summer": "Maintain mulch ring. Watch for stress signs.",
+        "fall": "Spectacular fall color.",
+        "winter": "Dormant pruning by arborist if needed."
+      },
+      "warnings": [
+        "Large trees — any significant pruning requires a certified arborist (ISA certified). Do not attempt to prune large branches yourself.",
+        "Watch for Verticillium wilt — sudden wilting of individual branches, dark streaking in wood. Contact arborist immediately if suspected.",
+        "Protect trunk from lawn equipment damage — a 4-6 foot mulch ring is essential."
+      ]
+    },
+    {
+      "id": "DOG",
+      "name": "Flowering Dogwood",
+      "scientific": "Cornus florida",
+      "emoji": "🌸",
+      "color": "#dfe6e9",
+      "watering": "MOST drought-sensitive tree on the property. Water deeply 2-3 times per week during summer dry spells. Shallow root system suffers quickly.",
+      "fertilizing": "Light acidic fertilizer in spring only.",
+      "pruning": "Only immediately after spring bloom. Never prune in summer, fall, or winter.",
+      "seasonal": {
+        "spring": "Spectacular bloom. Prune lightly if needed immediately after.",
+        "summer": "Critical watering period. Mulch heavily to retain moisture.",
+        "fall": "Red berries, fall color.",
+        "winter": "Leave alone."
+      },
+      "warnings": [
+        "Most drought-sensitive plant on the property — prioritize watering during dry spells.",
+        "Watch for Dogwood Anthracnose: brown leaf spots with purple halos. Treat with fungicide; improve air circulation. Can be fatal if untreated.",
+        "Wide mulch ring essential — at least to drip line. Shallow roots compete with grass."
+      ]
+    },
+    {
+      "id": "NAN",
+      "name": "Nandina (Heavenly Bamboo)",
+      "scientific": "Nandina domestica",
+      "emoji": "🎋",
+      "color": "#74b9ff",
+      "watering": "Very drought tolerant.",
+      "fertilizing": "Not needed — very vigorous.",
+      "pruning": "Late winter — cut 1/3 of stems to ground, 1/3 to mid-height, 1/3 full height for natural layered look.",
+      "seasonal": {
+        "spring": "New growth.",
+        "summer": "Low maintenance.",
+        "fall": "Red berries develop.",
+        "winter": "Red berries. Prune in late winter."
+      },
+      "warnings": [
+        "INVASIVE SPECIES in Virginia — spreads via bird-dispersed seeds into natural areas.",
+        "Berries are TOXIC TO BIRDS — Cedar Waxwings and other birds can die from eating large quantities.",
+        "Consider replacing with native alternatives: Virginia Sweetspire (Itea virginica), Inkberry Holly (Ilex glabra), or Beautyberry (Callicarpa americana)."
+      ]
+    },
+    {
+      "id": "RBD",
+      "name": "Eastern Redbud Forest Pansy",
+      "scientific": "Cercis canadensis 'Forest Pansy'",
+      "emoji": "❤️",
+      "color": "#fd79a8",
+      "watering": "Moderate. Drought tolerant once established.",
+      "fertilizing": "Light balanced fertilizer in spring.",
+      "pruning": "Immediately after blooming in spring. Remove dead wood and crossing branches.",
+      "seasonal": {
+        "spring": "Stunning magenta blooms on bare branches in early April before leaves emerge.",
+        "summer": "Heart-shaped purple foliage. Watch for canker.",
+        "fall": "Yellow fall color.",
+        "winter": "Architectural branching structure."
+      },
+      "warnings": [
+        "Watch for Cytospora canker disease — sunken, discolored areas on bark with oozing. Prune out affected wood 6-8 inches below infected area with sterilized tools. Can be fatal if extensive."
+      ]
+    },
+    {
+      "id": "DAY",
+      "name": "Daylily",
+      "scientific": "Hemerocallis spp.",
+      "emoji": "🌼",
+      "color": "#fdcb6e",
+      "watering": "Very drought tolerant once established.",
+      "fertilizing": "Balanced fertilizer in spring as growth begins.",
+      "pruning": "Deadhead spent individual flowers daily during bloom season. Cut flower stalks to base after all blooms on stalk are spent. Cut foliage to 4-6 inches after first hard frost.",
+      "seasonal": {
+        "spring": "New growth. Apply fertilizer.",
+        "summer": "Blooms June-July typically. Deadhead daily.",
+        "fall": "Cut back after frost.",
+        "winter": "Dormant. Clumps can be divided in fall or early spring."
+      },
+      "warnings": [
+        "TOXIC TO CATS — all parts are highly toxic to cats, causing kidney failure. Not a concern for dogs or humans."
+      ],
+      "notes": "Divide clumps every 3-4 years in early fall for best blooming."
+    },
+    {
+      "id": "SWC",
+      "name": "Summersweet (Clethra)",
+      "scientific": "Clethra alnifolia",
+      "emoji": "🌿",
+      "color": "#55efc4",
+      "watering": "Moderate. Tolerates moist areas well.",
+      "fertilizing": "Light acidic fertilizer in spring.",
+      "pruning": "Late winter if needed — remove dead wood and shape. Can cut back hard to rejuvenate.",
+      "seasonal": {
+        "spring": "New growth. Very fragrant.",
+        "summer": "Fragrant white/pink flower spikes July-August. Excellent for pollinators.",
+        "fall": "Yellow fall color. Seed capsules persist.",
+        "winter": "Prune in late winter."
+      },
+      "warnings": [],
+      "notes": "Native plant — excellent for pollinators and wildlife. Tolerates partial shade and moist soils."
+    }
+  ]
+}
