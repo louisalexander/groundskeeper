@@ -1,6 +1,6 @@
 // test/geometry.test.js
 import { describe, it, expect } from 'vitest';
-import { bearingVec, move, corners, house, powerBox } from '../src/geometry.js';
+import { bearingVec, move, corners, house, powerBox, arcPoints, frontEdgePoints } from '../src/geometry.js';
 
 const close = (a, b, tol = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(tol);
 
@@ -70,5 +70,35 @@ describe('powerBox', () => {
   it('lies 126 ft from A along the 137.5° left boundary', () => {
     const A = { x: 0, y: 0 };
     close(dist(A, powerBox()), 126.0, 1e-3);
+  });
+});
+
+// append to test/geometry.test.js
+
+describe('arcPoints', () => {
+  it('returns segments+1 points, starting at the start point', () => {
+    const start = { x: 0, y: 0 };
+    const pts = arcPoints(start, 90, 40, 43.76, true, 8);
+    expect(pts.length).toBe(9);
+    close(pts[0].x, 0, 1e-9); close(pts[0].y, 0, 1e-9);
+  });
+  it('keeps every sampled point at radius R from the computed center', () => {
+    const start = { x: 0, y: 0 };
+    const R = 40;
+    const pts = arcPoints(start, 90, R, 43.76, true, 16);
+    // center is 90° right of travel (south of an east-bound start) → {0, R}
+    const center = { x: 0, y: R };
+    for (const p of pts) close(Math.hypot(p.x - center.x, p.y - center.y), R, 1e-6);
+  });
+});
+
+describe('frontEdgePoints', () => {
+  it('starts at D and ends at ≈ C2end (within survey rounding)', () => {
+    const { D, C2end } = corners();
+    const pts = frontEdgePoints();
+    close(pts[0].x, D.x, 1e-6); close(pts[0].y, D.y, 1e-6);
+    const last = pts[pts.length - 1];
+    // chord(2R·sin(Δ/2)) vs survey-rounded chord differ ~0.01 ft per arc
+    close(last.x, C2end.x, 0.1); close(last.y, C2end.y, 0.1);
   });
 });

@@ -49,3 +49,40 @@ export function house() {
 export function powerBox() {
   return move({ x: 0, y: 0 }, 137.5, 126);
 }
+
+// append to src/geometry.js
+
+// Sample an arc into `segments`+1 points (feet).
+//  start      : {x,y} arc start
+//  bearing0   : initial travel bearing (deg) at start
+//  R          : radius (ft)
+//  deltaDeg   : swept angle (deg, positive magnitude)
+//  cw         : true = clockwise travel, false = counter-clockwise
+//  segments   : number of straight chords to approximate the arc
+export function arcPoints(start, bearing0, R, deltaDeg, cw, segments = 24) {
+  // Center is perpendicular to travel: 90° right (CW) or 90° left (CCW).
+  const toCenterBearing = bearing0 + (cw ? 90 : -90);
+  const center = move(start, toCenterBearing, R);
+  // Angle (math convention) from center to start.
+  const a0 = Math.atan2(start.y - center.y, start.x - center.x);
+  // y-down space: CW travel = increasing math angle; CCW = decreasing.
+  const sign = cw ? 1 : -1;
+  const total = (deltaDeg * Math.PI) / 180;
+  const out = [];
+  for (let i = 0; i <= segments; i++) {
+    const a = a0 + sign * total * (i / segments);
+    out.push({ x: center.x + R * Math.cos(a), y: center.y + R * Math.sin(a) });
+  }
+  return out;
+}
+
+// The curved front edge sampled from D through the C1 and C2 arcs.
+// Entry tangent at D is 47.5° (derived from chord 69.38° − Δ/2; see plan notes),
+// NOT the 137.5° left-boundary bearing — the boundary turns onto the cul-de-sac at D.
+export function frontEdgePoints(segments = 24) {
+  const { D } = corners();
+  const c1 = arcPoints(D, 47.5, 40, 43.76, true, segments);    // CW, entry tangent 47.5°
+  const bearingAfterC1 = 47.5 + 43.76;                         // = 91.26°, C1 exit = C2 entry
+  const c2 = arcPoints(c1[c1.length - 1], bearingAfterC1, 50, 9.92, false, segments); // CCW
+  return [...c1, ...c2.slice(1)]; // drop duplicate join point
+}
