@@ -4,7 +4,7 @@
     "city": null,
     "state": "VA",
     "zip": null,
-    "county": "the county",
+    "county": null,
     "lot": null,
     "block": null,
     "subdivision": null,
@@ -13,10 +13,10 @@
     "fema_panel": "51087C0036D"
   },
   "survey": {
-    "surveyor": "the surveyor",
-    "license": "(redacted)",
+    "surveyor": null,
+    "license": null,
     "date": "2026-02-16",
-    "job_number": "(redacted)",
+    "job_number": null,
     "datum": "NAD 83",
     "scale": "1 inch = 30 feet",
     "notes": "Utilities Underground"

@@ -42,7 +42,7 @@ No shared/multi-user editing.
 **Stack**
 - **Leaflet** — map engine (georeferenced imagery, pan/zoom/touch, markers). ~40KB.
 - **Bundled public-domain orthophoto** — the default *and* offline basemap (see §3.3). Sourced
-  from VGIN (Virginia GIS) / the county GIS / USDA NAIP, committed as a static app asset.
+  from VGIN (Virginia GIS) / the county GIS portal / USDA NAIP, committed as a static app asset.
   Optional live tile layers (Esri/Google/Mapbox) can be toggled on when online for freshness.
 - **Vanilla JS in ES modules** — no framework.
 - **Supabase JS client** — sync + passwordless auth (free tier).
@@ -111,7 +111,7 @@ finicky to cache and its terms generally forbid offline tile storage. Instead th
 **one high-resolution, georeferenced orthophoto of the lot, committed as a static app asset**
 (`public/basemap/`) and drawn via `L.imageOverlay` at its known lat/lon corner bounds.
 
-- **Source:** public-domain imagery — **VGIN (Virginia GIS)**, **the county GIS**, or
+- **Source:** public-domain imagery — **VGIN (Virginia GIS)**, **the county GIS portal**, or
   **USDA NAIP**. VA local orthoimagery is often **6-inch to 1-foot** resolution (frequently
   crisper than consumer basemaps) and legal to store and ship.
 - **Offline by construction:** it's part of the app shell, so it works with no signal — no tile
@@ -243,7 +243,7 @@ Export generates a self-contained background **PNG**: the bundled orthophoto wit
 outline + house drawn on top, at fixed, known pixel dimensions and known lat/lon bounds. Because
 the image bounds are known, every item's on-image position is an exact linear map from its
 lat/lon → percentage, so card elements line up perfectly with the imagery.
-→ saved to `/config/www/` (e.g. `lot25-basemap.png`).
+→ saved to `/config/www/` (e.g. `yard-basemap.png`).
 
 ### 6.2 Entity mapping (settings UI)
 A **Settings → "HA Entities"** panel maps app concepts to *your* real HA entity IDs, replacing
@@ -266,7 +266,7 @@ Card YAML positions each element by % over the background image:
 - **Sensors** → `state-label` (or badge) showing the live value (rain rate, soil %, temperature)
   at its true position.
 - **Plants** → lightweight label/marker (info only).
-→ saved as `lot25-card.yaml`, pasted into a dashboard. **No HACS/add-ons required** for Phase 1.
+→ saved as `yard-card.yaml`, pasted into a dashboard. **No HACS/add-ons required** for Phase 1.
 
 ### 6.5 Deferred (designed-for, later phases)
 - **Floorplan custom-card** output (SVG + config) — Phase 2.
@@ -299,7 +299,7 @@ Card YAML positions each element by % over the background image:
 
 ## 9. Open questions / deferred
 - **Sourcing the orthophoto** (implementation task): obtain the best available public-domain
-  georeferenced image of the lot from VGIN / the county GIS / USDA NAIP, record its lat/lon
+  georeferenced image of the lot from VGIN / the county GIS portal / USDA NAIP, record its lat/lon
   corner bounds, and commit it to `public/basemap/`.
 - Optional live tile layer + any API key (Mapbox/Google) — deferred; bundled orthophoto is the
   default and is sufficient to start.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>the lot · Yard Map</title>
+<title>Yard Map</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -142,7 +142,7 @@ header h1{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.07em
 </head>
 <body>
 <header>
-  <h1>the lot · Yard Map</h1>
+  <h1>Yard Map</h1>
   <button class="hbtn" onclick="exportJSON()">⬇ JSON</button>
   <button class="hbtn" onclick="exportHA()">⬇ HA</button>
   <button class="hbtn danger" onclick="clearAll()">Reset</button>
@@ -947,7 +947,7 @@ function addZone(){const name=prompt('Zone name:',`Zone ${nextZoneId}`);if(!name
 // EXPORT
 // ═══════════════════════════════════════════════════════
 function exportJSON(){
-  const data={property:{address:'',lot:'',block:'',county:'the county',state:'VA',scale_px_per_ft:F,survey_date:'2026-02-16'},
+  const data={property:{address:'',lot:'',block:'',county:'',state:'VA',scale_px_per_ft:F,survey_date:'2026-02-16'},
     anchor:anchor?{lat:anchor.lat,lon:anchor.lon,accuracy:anchor.accuracy,reference:'Power Box — left boundary 126ft from NW corner'}:null,
     zones,
     heads:heads.map(h=>({...h,survey_ft:{east:+(h.x/F).toFixed(2),south:+(h.y/F).toFixed(2)}})),
@@ -958,7 +958,7 @@ function exportJSON(){
 function exportHA(){
   const hEls=heads.map(h=>{const zIdx=zones.findIndex(z=>z.id===h.zoneId)+1;return`  - type: state-badge\n    entity: switch.rachio_zone_${zIdx}\n    title: "${h.label}"\n    style:\n      left: "${((h.x/SVG_W)*100).toFixed(1)}%"\n      top: "${((h.y/SVG_H)*100).toFixed(1)}%"\n      transform: translate(-50%,-50%)`;}).join('\n');
   const pEls=plants.map(pl=>{const pt=PLANT_TYPES.find(t=>t.id===pl.typeId);return`  - type: custom:button-card\n    name: "${pl.label}"\n    # ${pt?pt.name:''}\n    style:\n      left: "${((pl.x/SVG_W)*100).toFixed(1)}%"\n      top: "${((pl.y/SVG_H)*100).toFixed(1)}%"\n      transform: translate(-50%,-50%)`;}).join('\n');
-  dl('lot25-yard-ha.yaml',`# HA picture-elements — the lot\ntype: picture-elements\nimage: /local/lot25-yard.svg\nelements:\n${hEls}\n${pEls}\n  - type: state-label\n    entity: sensor.ecowitt_ws90_rain_rate\n    style: {left:"88%",top:"5%",color:"#5b8dee"}\n`);
+  dl('lot25-yard-ha.yaml',`# HA picture-elements\ntype: picture-elements\nimage: /local/lot25-yard.svg\nelements:\n${hEls}\n${pEls}\n  - type: state-label\n    entity: sensor.ecowitt_ws90_rain_rate\n    style: {left:"88%",top:"5%",color:"#5b8dee"}\n`);
 }
 function dl(fn,c){const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(c);a.download=fn;a.click();}
 function clearAll(){if(!confirm('Delete everything? This cannot be undone.'))return;heads=[];plants=[];anchor=null;nextHeadId=1;nextPlantId=1;selectedType=null;selectedId=null;renderItems();updateSidebar();buildZonePicker();buildPlantPicker();updateStats();clearSel();saveData();showSaveStatus('Cleared');}

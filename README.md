@@ -122,8 +122,8 @@ Specs and step-by-step plans live in [`docs/superpowers/`](docs/superpowers/).
 
 Groundskeeper generates files you import into HA (it never holds HA tokens itself):
 
-- **`lot25-basemap.png`** → `/config/www/` — your aerial + survey outline, with exact lat/lon→% positioning.
-- **`lot25-card.yaml`** → a `picture-elements` card where head badges **toggle their Rachio zone** and color by run state, and sensor labels show live values (rain rate, soil %, temperature).
+- **`yard-basemap.png`** → `/config/www/` — your aerial + survey outline, with exact lat/lon→% positioning.
+- **`yard-card.yaml`** → a `picture-elements` card where head badges **toggle their Rachio zone** and color by run state, and sensor labels show live values (rain rate, soil %, temperature).
 
 Entity IDs are mapped in-app (Settings → HA Entities), so the export matches *your* Home Assistant. A `floorplan` custom-card output and automation blueprints are designed-for and planned.
 
