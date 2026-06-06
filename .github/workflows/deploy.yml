@@ -28,9 +28,9 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Cloudflare secrets not set — skipping deploy (this is expected until configured)."
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: steps.guard.outputs.ready == 'true'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.guard.outputs.ready == 'true'
         with:
           node-version: 20
@@ -45,7 +45,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       - name: Publish to Cloudflare Pages
         if: steps.guard.outputs.ready == 'true'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

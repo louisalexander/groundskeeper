@@ -6,6 +6,13 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     labels: ["type:chore", "dependencies"]
+    # vite & vitest are peer-locked and require a deliberate, tested migration
+    # (lockfile regen + config + Node bump) — don't auto-PR major bumps.
+    ignore:
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
