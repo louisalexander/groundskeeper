@@ -1,0 +1,30 @@
+name: Feature / task
+description: A new capability or a planned implementation task
+labels: ["type:feat"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should this enable, and why?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - geometry
+        - map / calibration
+        - survey / GPS
+        - sync / auth / offline
+        - HA export
+        - infra / ci
+        - other
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
