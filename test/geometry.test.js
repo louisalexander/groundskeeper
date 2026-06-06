@@ -1,6 +1,6 @@
 // test/geometry.test.js
 import { describe, it, expect } from 'vitest';
-import { bearingVec, move, corners } from '../src/geometry.js';
+import { bearingVec, move, corners, house, powerBox } from '../src/geometry.js';
 
 const close = (a, b, tol = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(tol);
 
@@ -48,5 +48,27 @@ describe('corners', () => {
   it('B is east and slightly north of A (bearing 47.5° NNE → +x, −y)', () => {
     expect(c.B.x).toBeGreaterThan(0);
     expect(c.B.y).toBeLessThan(0);  // 47.5° is NNE → northward = negative y in +y=south space
+  });
+});
+
+// append to test/geometry.test.js
+
+describe('house', () => {
+  const h = house();
+  it('has width ≈ 56.89 ft (NW→NE)', () => {
+    close(dist(h.NW, h.NE), 56.89, 1e-3);
+  });
+  it('has depth ≈ 59.85 ft (NW→SW)', () => {
+    close(dist(h.NW, h.SW), 59.85, 1e-3);
+  });
+  it('is a parallelogram (NE→SE depth equals NW→SW depth)', () => {
+    close(dist(h.NE, h.SE), dist(h.NW, h.SW), 1e-6);
+  });
+});
+
+describe('powerBox', () => {
+  it('lies 126 ft from A along the 137.5° left boundary', () => {
+    const A = { x: 0, y: 0 };
+    close(dist(A, powerBox()), 126.0, 1e-3);
   });
 });
