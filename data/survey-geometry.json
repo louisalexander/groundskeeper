@@ -1,0 +1,207 @@
+{
+  "property": {
+    "address": "12009 Blairmont Court",
+    "city": "Glen Allen",
+    "state": "VA",
+    "zip": "23059",
+    "county": "Henrico",
+    "lot": "25",
+    "block": "B",
+    "subdivision": "Blairmont at Grey Oaks",
+    "gpin": null,
+    "fema_zone": "X",
+    "fema_panel": "51087C0036D"
+  },
+  "survey": {
+    "surveyor": "A.G. Harocopos & Associates, P.C.",
+    "license": "LIC NO. 2524",
+    "date": "2026-02-16",
+    "job_number": "JN 54826",
+    "datum": "NAD 83",
+    "scale": "1 inch = 30 feet",
+    "notes": "Utilities Underground"
+  },
+  "lot_geometry": {
+    "coordinate_system": "Local survey bearing system. NW corner (Point A) is origin. All bearings are compass bearings (clockwise from North).",
+    "corners": {
+      "A": { "name": "NW rear-left", "description": "Origin point. Rear property line meets left boundary." },
+      "B": { "name": "NE rear-right", "description": "Rear property line meets right boundary." },
+      "C": { "name": "SE front-right", "description": "Right boundary meets Blairmont Court cul-de-sac." },
+      "D": { "name": "SW front-left", "description": "Left boundary meets Blairmont Court cul-de-sac arcs." }
+    },
+    "boundaries": {
+      "rear": {
+        "from": "A",
+        "to": "B",
+        "bearing": "S 47°30'00\" W",
+        "bearing_decimal": 227.5,
+        "traverse_bearing": "N 47°30'00\" E",
+        "traverse_bearing_decimal": 47.5,
+        "distance_ft": 92.0,
+        "description": "Rear property line. Shared with Lot 14."
+      },
+      "right_side": {
+        "from": "B",
+        "to": "C",
+        "bearing": "N 42°30'00\" W",
+        "traverse_bearing": "S 42°30'00\" E",
+        "traverse_bearing_decimal": 137.5,
+        "distance_ft": 150.0,
+        "description": "Right (east) boundary. Shared with Lot 24.",
+        "notes": "16-foot Drainage & Utility Easement along rear portion."
+      },
+      "left_side": {
+        "from": "A",
+        "to": "D",
+        "bearing": "S 42°30'00\" E",
+        "bearing_decimal": 137.5,
+        "distance_ft": 133.47,
+        "description": "Left (west) boundary. Shared with Lot 26."
+      },
+      "front": {
+        "description": "Curved cul-de-sac frontage on Blairmont Court. Consists of two arcs plus a straight tangent segment.",
+        "arcs": {
+          "C1": {
+            "radius_ft": 40.0,
+            "arc_length_ft": 30.55,
+            "chord_length_ft": 29.81,
+            "chord_bearing": "N 69°22'51\" E",
+            "chord_bearing_decimal": 69.3808,
+            "delta_angle": "43°45'42\"",
+            "delta_decimal": 43.7617,
+            "start_point": "D",
+            "direction": "CW (sweep=1 in SVG going forward D→C1end)",
+            "start_tangent_bearing": 47.5,
+            "end_tangent_bearing": 91.2617
+          },
+          "C2": {
+            "radius_ft": 50.0,
+            "arc_length_ft": 8.66,
+            "chord_length_ft": 8.65,
+            "chord_bearing": "N 86°18'00\" E",
+            "chord_bearing_decimal": 86.3,
+            "delta_angle": "9°55'23\"",
+            "delta_decimal": 9.9231,
+            "start_point": "C1_end",
+            "direction": "CCW (sweep=0 in SVG going forward C1end→C2end)",
+            "start_tangent_bearing": 91.2617,
+            "end_tangent_bearing": 81.3385,
+            "notes": "Reverse curve from C1 — opposite sweep direction, creating S-shape."
+          }
+        },
+        "tangent": {
+          "from": "C2_end",
+          "to": "C",
+          "bearing": "N 47°30'00\" E",
+          "distance_ft": 57.59,
+          "description": "Straight tangent segment connecting C2 arc end to SE lot corner. This is the '57.59' N47°30'E' label on the survey."
+        }
+      }
+    },
+    "area": {
+      "polygon_sqft": 13039.6,
+      "arc_additions_sqft": 58.8,
+      "total_sqft": 13098.4,
+      "acres": 0.3007,
+      "public_record_acres": 0.31,
+      "discrepancy_note": "3% difference from GIS tax parcel — within normal tolerance."
+    }
+  },
+  "house": {
+    "address_number": 12009,
+    "style": "2-Story Brick & Vinyl Colonial",
+    "year_built": 2006,
+    "builder": "Boone Homes (likely — same builder as similar homes on street)",
+    "finished_sqft": 4797,
+    "stories": 3,
+    "garage": "3-car",
+    "basement": "Crawl space",
+    "footprint": {
+      "width_ft": 56.89,
+      "depth_ft": 59.85,
+      "sqft": 3404,
+      "offsets": {
+        "rear_setback_ft": 22.70,
+        "left_setback_ft": 22.67,
+        "right_setback_top_ft": 12.44,
+        "right_setback_bottom_ft": 12.41,
+        "front_to_street_ft": 50.92
+      }
+    },
+    "yard_depths": {
+      "backyard_ft": 22.70,
+      "front_yard_ft": 50.92,
+      "note": "Backyard is shallow (~23ft) — largely occupied by garage rear wall and brick patio. House has rear-loading garage."
+    }
+  },
+  "survey_monuments": {
+    "power_box": {
+      "description": "Power Box (filled square on survey). On left boundary, approx 126ft from NW corner (A) along left boundary bearing.",
+      "svg_reference": "POWBOX_SVG coordinates in app",
+      "ft_from_NW_east": 10.6,
+      "ft_from_NW_south": 84.9,
+      "gps_anchor": true,
+      "anchor_instructions": "This is the recommended GPS anchor point. It is a physical utility box visible above ground on the left/west property boundary, approximately 126ft from the rear-left corner going south."
+    },
+    "tv_pedestal": {
+      "description": "TV Pedestal (triangle). Near front-right corner of lot.",
+      "symbol": "△"
+    },
+    "stone_point": {
+      "description": "Stone Point (diamond). Near front-left area of lot.",
+      "symbol": "◇"
+    },
+    "rod_f": {
+      "description": "Rod/F (circle). At front-right corner C.",
+      "symbol": "○"
+    }
+  },
+  "svg_coordinate_system": {
+    "scale_px_per_ft": 4.0,
+    "origin": "SVG canvas top-left. NW corner (A) placed at approx (50,50) after margin offset.",
+    "y_axis": "Positive Y goes SOUTH (downward on screen) — standard SVG convention.",
+    "x_axis": "Positive X goes EAST.",
+    "computing_corners": {
+      "note": "All corners computed from bearing vectors. Bearing to SVG vector: r = (90 - bearing_degrees) * PI/180; x = cos(r); y = -sin(r)",
+      "A": "origin (0,0) before offset",
+      "B": "move(A, 47.5°, 92ft)",
+      "C": "move(B, 137.5°, 150ft)",
+      "D": "move(A, 137.5°, 133.47ft)",
+      "C1end": "move(D, 69.3808°, 29.81ft)",
+      "C2end": "move(C1end, 86.3°, 8.65ft)"
+    }
+  },
+  "irrigation": {
+    "controller": "Rachio",
+    "zones": 6,
+    "zone_map": {
+      "1": "Front",
+      "2": "Left Side",
+      "3": "Right Side",
+      "4": "Rear Left",
+      "5": "Rear Right",
+      "6": "Drip/Garden"
+    },
+    "ha_entity_pattern": "switch.rachio_zone_N (verify exact IDs in HA Developer Tools)"
+  },
+  "sensors": {
+    "weather": {
+      "device": "Ecowitt WS90",
+      "ha_entities": {
+        "rain_rate": "sensor.ecowitt_ws90_rain_rate",
+        "temperature": "sensor.ecowitt_ws90_temperature",
+        "wind_speed": "sensor.ecowitt_ws90_wind_speed",
+        "note": "Verify exact entity IDs in HA Developer Tools → States"
+      }
+    },
+    "soil_moisture": {
+      "device": "THIRDREALITY Smart Soil Moisture Sensor",
+      "protocol": "Zigbee (Zigbee2MQTT or ZHA)",
+      "ha_entity_pattern": "sensor.soil_moisture_* (verify exact IDs)",
+      "planned_locations": ["front yard Zone 1", "rear Zone 4 or 5"]
+    },
+    "weather_underground": {
+      "note": "Also integrated for weather data"
+    }
+  }
+}

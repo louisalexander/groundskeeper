@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lot 25 · Yard Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1117;--surface:#181c27;--border:#2a2f3d;
+  --accent:#3ecf8e;--accent2:#5b8dee;--warn:#f5a623;--danger:#e8445a;
+  --text:#e8eaf0;--muted:#6b7280;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+header h1{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--accent);text-transform:uppercase;flex:1;}
+.hbtn{font-family:'Space Mono',monospace;font-size:10px;padding:5px 9px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;}
+.hbtn:hover{background:var(--border);}
+.hbtn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.hbtn.danger{border-color:var(--danger);color:var(--danger);}
+
+/* ── VIEW SWITCHER ── */
+.view-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.vb{flex:1;padding:10px 4px;text-align:center;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .12s;}
+.vb.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── VIEWS ── */
+.view{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.view.active{display:flex;}
+
+/* ══════════════════════════════════
+   MAP VIEW
+══════════════════════════════════ */
+.map-view{flex-direction:row;}
+.sidebar{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-tabs{display:flex;border-bottom:1px solid var(--border);}
+.sbt{flex:1;padding:7px 2px;text-align:center;font-family:'Space Mono',monospace;font-size:9px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;}
+.sbt.active{color:var(--accent);border-bottom-color:var(--accent);}
+.sb-panel{display:none;flex:1;overflow-y:auto;padding:8px;}
+.sb-panel.active{display:block;}
+.sb-panel::-webkit-scrollbar{width:3px;}
+.sb-panel::-webkit-scrollbar-thumb{background:var(--border);}
+.sh3{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.zi{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:5px;cursor:pointer;border:1px solid transparent;font-size:11px;margin-bottom:2px;}
+.zi:hover{background:var(--border);}
+.zi.sel{border-color:currentColor;}
+.zd{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pti{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:5px;cursor:pointer;font-size:10px;margin-bottom:2px;border:1px solid transparent;}
+.pti:hover{background:var(--border);}
+.pti.sel{border-color:currentColor;}
+.ie{display:flex;align-items:center;gap:5px;padding:3px 5px;border-radius:4px;font-size:10px;cursor:pointer;}
+.ie:hover{background:var(--border);}
+.ie.sel{background:rgba(91,141,238,.2);}
+.ie-lbl{flex:1;font-family:'Space Mono',monospace;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ie-sub{color:var(--muted);font-size:9px;}
+.del{opacity:0;cursor:pointer;color:var(--danger);font-size:12px;background:none;border:none;padding:1px;}
+.ie:hover .del{opacity:1;}
+.rename-btn{cursor:pointer;color:var(--muted);font-size:12px;background:none;border:none;padding:1px 4px;border-radius:3px;flex-shrink:0;}
+.rename-btn:hover{color:var(--accent);background:var(--border);}
+
+.map-container{flex:1;position:relative;overflow:hidden;background:#070a0e;cursor:crosshair;}
+.cwrap{position:absolute;top:50%;left:50%;transform-origin:center center;}
+.zoom-controls{position:absolute;bottom:10px;right:10px;display:flex;flex-direction:column;gap:3px;}
+.zb{width:30px;height:30px;background:var(--surface);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.zb:hover{background:var(--border);}
+
+.right-panel{width:200px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;}
+.rps{padding:10px 12px;border-bottom:1px solid var(--border);}
+.rps h3{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.fg{margin-bottom:6px;}
+.fg label{display:block;font-size:10px;color:var(--muted);margin-bottom:2px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:5px 7px;color:var(--text);font-size:11px;font-family:'DM Sans',sans-serif;outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg textarea{resize:vertical;height:50px;font-size:10px;}
+.nos{padding:12px;text-align:center;color:var(--muted);font-size:11px;line-height:1.6;}
+.care-tip{background:rgba(62,207,142,.07);border:1px solid rgba(62,207,142,.18);border-radius:5px;padding:7px 9px;font-size:10px;color:var(--accent);line-height:1.6;margin-bottom:5px;}
+.care-warn{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);border-radius:5px;padding:7px 9px;font-size:10px;color:var(--warn);line-height:1.6;margin-bottom:5px;}
+.cd{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);padding:4px 7px;background:var(--bg);border-radius:4px;border:1px solid var(--border);word-break:break-all;}
+
+.layer-bar{display:flex;gap:4px;padding:6px 10px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.lb{font-family:'Space Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;}
+.lb.on{color:var(--accent);border-color:var(--accent);}
+.lb-sep{flex:1;}
+
+/* ══════════════════════════════════
+   SURVEY VIEW (phone-friendly)
+══════════════════════════════════ */
+.survey-view{background:var(--bg);overflow-y:auto;}
+.sv-section{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sv-section h2{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:10px;}
+
+/* Anchor card */
+.anchor-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;}
+.anchor-status{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.anchor-dot{width:12px;height:12px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.anchor-dot.good{background:var(--accent);}
+.anchor-dot.warn{background:var(--warn);}
+.anchor-dot.pulse{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.anchor-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--text);}
+.anchor-sub{font-size:10px;color:var(--muted);}
+.big-btn{width:100%;padding:14px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.big-btn.green{background:var(--accent);color:#000;}
+.big-btn.green:hover{opacity:.85;}
+.big-btn.blue{background:var(--accent2);color:#fff;}
+.big-btn.blue:hover{opacity:.85;}
+.big-btn.outline{background:transparent;border:2px solid var(--border);color:var(--text);}
+.big-btn.outline:hover{border-color:var(--text);}
+.big-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Accuracy meter */
+.acc-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:6px;}
+.acc-fill{height:100%;border-radius:3px;transition:width .3s,background .3s;}
+
+/* Zone / plant picker */
+.picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.pick-btn{padding:12px 8px;border-radius:8px;border:2px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:all .12s;font-family:'DM Sans',sans-serif;}
+.pick-btn:hover{border-color:currentColor;}
+.pick-btn.sel{border-width:2px;}
+.pick-emoji{font-size:20px;display:block;margin-bottom:4px;}
+.pick-name{font-size:11px;font-weight:600;display:block;}
+.pick-count{font-size:10px;color:var(--muted);display:block;margin-top:2px;}
+
+/* Averaging progress */
+.avg-card{background:var(--surface);border:2px solid var(--accent2);border-radius:10px;padding:16px;text-align:center;display:none;}
+.avg-card.active{display:block;}
+.avg-count{font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:var(--accent);line-height:1;}
+.avg-label{font-size:13px;color:var(--muted);margin-top:4px;}
+.avg-acc{font-family:'Space Mono',monospace;font-size:11px;margin-top:8px;}
+.avg-progress{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:10px;}
+.avg-fill{height:100%;border-radius:4px;background:var(--accent2);transition:width .5s;}
+
+/* Status bar */
+.status-bar{padding:4px 14px;background:var(--bg);border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);display:flex;gap:12px;flex-shrink:0;}
+.status-bar span{color:var(--accent);}
+
+.s-head,.s-plant{cursor:pointer;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lot 25 · Yard Map</h1>
+  <button class="hbtn" onclick="exportJSON()">⬇ JSON</button>
+  <button class="hbtn" onclick="exportHA()">⬇ HA</button>
+  <button class="hbtn danger" onclick="clearAll()">Reset</button>
+</header>
+
+<div class="view-bar">
+  <div class="vb active" id="vb-map" onclick="switchView('map')">🗺 MAP</div>
+  <div class="vb" id="vb-survey" onclick="switchView('survey')">📍 SURVEY</div>
+</div>
+
+<!-- ══════════════ MAP VIEW ══════════════ -->
+<div class="view map-view active" id="view-map">
+  <div class="sidebar">
+    <div class="sb-tabs">
+      <div class="sbt active" id="sbt-zones" onclick="sbTab('zones')">ZONES</div>
+      <div class="sbt" id="sbt-plants" onclick="sbTab('plants')">PLANTS</div>
+      <div class="sbt" id="sbt-list" onclick="sbTab('list')">LIST</div>
+    </div>
+    <div class="sb-panel active" id="sbp-zones">
+      <div class="sh3">Irrigation Zones</div>
+      <div id="zone-list"></div>
+    </div>
+    <div class="sb-panel" id="sbp-plants">
+      <div class="sh3">Plant Types</div>
+      <div id="plant-type-list"></div>
+    </div>
+    <div class="sb-panel" id="sbp-list">
+      <div class="sh3">All Items</div>
+      <div id="item-list"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+    <div class="layer-bar">
+      <button class="lb on" id="layer-heads" onclick="toggleLayer('heads')">💧 Heads</button>
+      <button class="lb on" id="layer-plants" onclick="toggleLayer('plants')">🌿 Plants</button>
+      <button class="lb on" id="layer-anchor" onclick="toggleLayer('anchor')">📍 Anchor</button>
+      <div class="lb-sep"></div>
+      <button class="lb" id="map-mode-pan" onclick="setMapMode('pan')">PAN</button>
+      <button class="lb active" id="map-mode-select" onclick="setMapMode('select')">SELECT</button>
+    </div>
+    <div class="map-container" id="map-container">
+      <div class="cwrap" id="canvas-wrap">
+        <svg id="lot-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="zoom-controls">
+        <button class="zb" onclick="zoom(1.25)">+</button>
+        <button class="zb" onclick="zoom(0.8)">−</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="rps">
+      <h3>Selected</h3>
+      <div id="sel-content" class="nos">Tap an item on the map to view details.</div>
+    </div>
+    <div class="rps">
+      <h3>GPS Anchor</h3>
+      <div id="anchor-summary" class="nos" style="font-size:10px;">Not set — use Survey tab.</div>
+    </div>
+    <div class="rps">
+      <h3>Summary</h3>
+      <div id="stats" style="font-size:10px;line-height:1.9;color:var(--muted);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SURVEY VIEW ══════════════ -->
+<div class="view survey-view" id="view-survey">
+
+  <!-- STEP 1: ANCHOR -->
+  <div class="sv-section">
+    <h2>Step 1 · GPS Anchor</h2>
+    <div class="anchor-card">
+      <div class="anchor-status">
+        <div class="anchor-dot" id="anchor-dot"></div>
+        <div>
+          <div class="anchor-label" id="anchor-label">No anchor set</div>
+          <div class="anchor-sub" id="anchor-sub">Stand at the Power Box on the left boundary</div>
+        </div>
+      </div>
+      <div class="acc-bar"><div class="acc-fill" id="acc-fill" style="width:0%"></div></div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;" id="acc-label">GPS accuracy: —</div>
+    </div>
+    <button class="big-btn green" id="anchor-btn" onclick="startAnchor()">📍 Set Anchor at Power Box</button>
+    <div class="avg-card" id="anchor-avg">
+      <div class="avg-count" id="anchor-count">0</div>
+      <div class="avg-label">readings averaged</div>
+      <div class="avg-acc" id="anchor-acc-live">accuracy: —</div>
+      <div class="avg-progress"><div class="avg-fill" id="anchor-prog" style="width:0%"></div></div>
+      <button class="big-btn outline" style="margin-top:12px;" onclick="stopAnchor()">Stop Early &amp; Save</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: WHAT ARE YOU PLACING -->
+  <div class="sv-section">
+    <h2>Step 2 · What to Place</h2>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="big-btn green" id="sv-placing-head" onclick="setSvPlacing('head')" style="flex:1;padding:10px;">💧 Sprinkler Head</button>
+      <button class="big-btn outline" id="sv-placing-plant" onclick="setSvPlacing('plant')" style="flex:1;padding:10px;">🌿 Plant</button>
+    </div>
+
+    <!-- Zone picker (shown when placing head) -->
+    <div id="zone-picker-wrap">
+      <div class="sh3" style="margin-bottom:8px;">Select Zone</div>
+      <div class="picker-grid" id="zone-picker"></div>
+    </div>
+
+    <!-- Plant type picker (shown when placing plant) -->
+    <div id="plant-picker-wrap" style="display:none;">
+      <div class="sh3" style="margin-bottom:8px;">Select Plant Type</div>
+      <div id="plant-picker" style="display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3: RECORD POSITION -->
+  <div class="sv-section">
+    <h2>Step 3 · Record Position</h2>
+    <div id="sv-no-anchor" style="color:var(--warn);font-size:12px;padding:8px 0;margin-bottom:8px;">⚠️ Set anchor point first (Step 1)</div>
+    <button class="big-btn blue" id="record-btn" onclick="startRecording()" disabled>
+      📍 I'm Standing at This Item
+    </button>
+    <div class="avg-card" id="record-avg">
+      <div class="avg-count" id="record-count">0</div>
+      <div class="avg-label">readings averaged</div>
+      <div class="avg-acc" id="record-acc-live">accuracy: —</div>
+      <div class="avg-progress"><div class="avg-fill" id="record-prog" style="width:0%"></div></div>
+      <button class="big-btn outline" style="margin-top:12px;" onclick="stopRecording()">Save Now</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <div class="sh3">Or enter coordinates manually</div>
+      <div style="display:flex;gap:6px;margin-top:6px;">
+        <input type="number" id="manual-lat" placeholder="Latitude" step="0.000001"
+          style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;color:var(--text);font-size:12px;outline:none;">
+        <input type="number" id="manual-lon" placeholder="Longitude" step="0.000001"
+          style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;color:var(--text);font-size:12px;outline:none;">
+      </div>
+      <button class="big-btn outline" style="margin-top:8px;padding:10px;" onclick="recordManual()">Use These Coordinates</button>
+    </div>
+  </div>
+
+  <!-- RECENT LOG -->
+  <div class="sv-section">
+    <h2>Recent Placements</h2>
+    <div id="sv-log" style="font-size:11px;color:var(--muted);line-height:1.9;"></div>
+  </div>
+
+</div>
+
+<div class="status-bar">
+  <div>HEADS: <span id="status-heads">0</span></div>
+  <div>PLANTS: <span id="status-plants">0</span></div>
+  <div>ANCHOR: <span id="status-anchor">—</span></div>
+  <div id="save-status" style="margin-left:auto;color:var(--accent);opacity:0.4;transition:opacity .5s;"></div>
+  <div id="status-coords" style="margin-left:8px;"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// SURVEY GEOMETRY
+// ═══════════════════════════════════════════════════════
+const F=4.0, ft=v=>v*F;
+function bv(deg){const r=(90-deg)*Math.PI/180;return{x:Math.cos(r),y:-Math.sin(r)};}
+function mv(pt,brg,dist){const v=bv(brg);return{x:pt.x+v.x*ft(dist),y:pt.y+v.y*ft(dist)};}
+
+const A={x:0,y:0}, B=mv(A,47.5,92), C=mv(B,137.5,150), D=mv(A,137.5,133.47);
+const C1end=mv(D,69+22/60+51/3600,29.81), C2end=mv(C1end,86+18/60,8.65);
+
+const allPts=[A,B,C,D,C1end,C2end];
+const MARGIN=50;
+const OFF_X=MARGIN-Math.min(...allPts.map(p=>p.x));
+const OFF_Y=MARGIN-Math.min(...allPts.map(p=>p.y));
+const SVG_W=Math.max(...allPts.map(p=>p.x))-Math.min(...allPts.map(p=>p.x))+MARGIN*2+60;
+const SVG_H=Math.max(...allPts.map(p=>p.y))-Math.min(...allPts.map(p=>p.y))+MARGIN*2+ft(22);
+
+function o(pt){return{x:+(pt.x+OFF_X).toFixed(1),y:+(pt.y+OFF_Y).toFixed(1)};}
+function p(pt){return`${pt.x},${pt.y}`;}
+
+const oA=o(A),oB=o(B),oC=o(C),oD=o(D),oC1=o(C1end),oC2=o(C2end);
+const hNW=mv(mv(A,137.5,22.70),47.5,22.67);
+const hNE=mv(hNW,47.5,56.89), hSW=mv(hNW,137.5,59.85), hSE=mv(hNE,137.5,59.85);
+const ohNW=o(hNW),ohNE=o(hNE),ohSW=o(hSW),ohSE=o(hSE);
+
+// Power Box location (survey marker — our anchor reference)
+const POWBOX_RAW = mv(A,137.5,126);
+const POWBOX_SVG = o(POWBOX_RAW);
+// Its position in feet from NW corner
+const POWBOX_FT = {east: POWBOX_RAW.x/F, south: POWBOX_RAW.y/F};
+
+// ═══════════════════════════════════════════════════════
+// PLANT TYPES
+// ═══════════════════════════════════════════════════════
+const PLANT_TYPES=[
+  {id:'JML',name:'Japanese Maple (Laceleaf)',emoji:'🍁',color:'#c0392b',abbr:'JML',
+   care:'Water during 10+ day dry spells. Mulch drip line. No heavy pruning.',
+   warn:'Front yard: remove ALL green rootstock shoots monthly Apr-Sep.',
+   prune:'Late winter — dead/crossing branches only.'},
+  {id:'AHY',name:'Annabelle Hydrangea',emoji:'🤍',color:'#bdc3c7',abbr:'AHY',
+   care:'Cut back hard to 12-18" in late Feb/March. Blooms on NEW wood.',
+   warn:'Wilts fast in summer heat — water deeply.',
+   prune:'Late Feb/March.'},
+  {id:'BHY',name:'Bigleaf Hydrangea',emoji:'💜',color:'#8e44ad',abbr:'BHY',
+   care:'Water 3x/week in summer. Afternoon shade. Acid soil for blue blooms.',
+   warn:'NEVER prune in fall/winter/spring — blooms on OLD wood only.',
+   prune:'Immediately after summer bloom only.'},
+  {id:'KOR',name:'Knockout Rose',emoji:'🌹',color:'#e74c3c',abbr:'KOR',
+   care:'Deadhead for rebloom. Fertilize every 4-6 weeks spring-Aug.',
+   warn:'Japanese beetles peak June-July — handpick or neem oil.',
+   prune:'Late Feb/March — cut back 1/3.'},
+  {id:'AZA',name:'Azalea (Robin Hill)',emoji:'🌸',color:'#fd79a8',abbr:'AZA',
+   care:'Acidic soil pH 4.5-6.0. Moderate water, good drainage.',
+   warn:'Prune ONLY within 3 weeks of bloom finishing.',
+   prune:'Immediately after spring bloom (within 3 weeks).'},
+  {id:'RHO',name:'Rhododendron',emoji:'🌸',color:'#a29bfe',abbr:'RHO',
+   care:'Keep consistently moist. Morning sun/afternoon shade.',
+   warn:'Same old-wood rules as azalea — only prune right after spring bloom.',
+   prune:'Right after spring bloom.'},
+  {id:'CRM',name:'Crape Myrtle',emoji:'🌳',color:'#e17055',abbr:'CRM',
+   care:'Drought tolerant. Water only during extended dry spells.',
+   warn:'NEVER top — only remove suckers and dead wood.',
+   prune:'Late winter only — light touch.'},
+  {id:'JMG',name:'Japanese Maple (Grafted)',emoji:'🍁',color:'#d35400',abbr:'JMG',
+   care:'Check for rootstock shoots monthly.',
+   warn:'Remove ALL green rootstock shoots — will overtake purple variety.',
+   prune:'Late winter, minimal.'},
+  {id:'LIG',name:'Ligustrum / Privet',emoji:'🌿',color:'#27ae60',abbr:'LIG',
+   care:'Very drought tolerant. Trim 2-3x/season.',
+   warn:'',prune:'Late spring, midsummer, early fall (stop Sep).'},
+  {id:'EUO',name:'Euonymus / Holly Hedge',emoji:'🌿',color:'#2ecc71',abbr:'EUO',
+   care:'Drought tolerant. Check for scale insects on stems.',
+   warn:'Watch for scale insects — treat with horticultural oil.',
+   prune:'Same as Ligustrum — 3x/season.'},
+  {id:'NHS',name:'Nellie Stevens Holly',emoji:'🌲',color:'#1abc9c',abbr:'NHS',
+   care:'Very drought tolerant. Natural pyramid form. Red berries in fall.',
+   warn:'Have a certified arborist assess periodically given size.',
+   prune:'Late Feb/March — consider professional help.'},
+  {id:'MAP',name:'Sugar/Red Maple',emoji:'🍂',color:'#e67e22',abbr:'MAP',
+   care:'Drought tolerant. Keep mowers away from trunk.',
+   warn:'Large trees — hire certified arborist for pruning.',
+   prune:'Late winter — arborist only.'},
+  {id:'DOG',name:'Flowering Dogwood',emoji:'🌸',color:'#dfe6e9',abbr:'DOG',
+   care:'Most drought-sensitive tree — deep water 2-3x/week in summer.',
+   warn:'Watch for Anthracnose. Shallow roots — wide mulch ring essential.',
+   prune:'Immediately after spring bloom only.'},
+  {id:'NAN',name:'Nandina',emoji:'🎋',color:'#74b9ff',abbr:'NAN',
+   care:'Consider replacing — invasive in VA, berries toxic to birds.',
+   warn:'Invasive. Toxic berries. Consider native alternatives.',
+   prune:'Late winter — staggered heights.'},
+  {id:'RBD',name:'Eastern Redbud Forest Pansy',emoji:'❤️',color:'#fd79a8',abbr:'RBD',
+   care:'Moderate water. Stunning magenta blooms on bare branches April.',
+   warn:'Watch for canker disease — prune out affected wood promptly.',
+   prune:'Immediately after blooming.'},
+  {id:'DAY',name:'Daylily',emoji:'🌼',color:'#fdcb6e',abbr:'DAY',
+   care:'Very drought tolerant. Deadhead daily during bloom.',
+   warn:'',prune:'Cut stalks to base after bloom. Cut foliage 4-6" after first frost.'},
+  {id:'SWC',name:'Summersweet (Clethra)',emoji:'🌿',color:'#55efc4',abbr:'SWC',
+   care:'Fragrant summer blooms. Minimal care.',
+   warn:'',prune:'Late winter if needed.'},
+];
+
+const ZONE_COLORS=['#3ecf8e','#5b8dee','#f5a623','#e8445a','#a78bfa','#f472b6','#34d399','#fb923c'];
+const HEAD_TYPES=['Rotor','Fixed Spray','Drip','MP Rotator','Bubbler'];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let zones=[
+  {id:1,name:'Zone 1 – Front',color:ZONE_COLORS[0]},
+  {id:2,name:'Zone 2 – Left Side',color:ZONE_COLORS[1]},
+  {id:3,name:'Zone 3 – Right Side',color:ZONE_COLORS[2]},
+  {id:4,name:'Zone 4 – Rear Left',color:ZONE_COLORS[3]},
+  {id:5,name:'Zone 5 – Rear Right',color:ZONE_COLORS[4]},
+  {id:6,name:'Zone 6 – Drip/Garden',color:ZONE_COLORS[5]},
+];
+let nextZoneId=7, heads=[], nextHeadId=1, plants=[], nextPlantId=1;
+let selectedId=null, selectedType=null;
+let selectedZone=1, selectedPlantType='JML';
+let svPlacing='head';
+let layerHeads=true, layerPlants=true, layerAnchor=true;
+let mapMode='select', mapScale=1, panX=0, panY=0, isPanning=false, panStart=null;
+
+// GPS anchor state
+let anchor=null; // {lat, lon, accuracy, svgX, svgY}
+let anchorReadings=[], anchorTimer=null;
+let recordReadings=[], recordTimer=null;
+const ANCHOR_TARGET=40, RECORD_TARGET=20;
+
+// ═══════════════════════════════════════════════════════
+// GPS MATH
+// ═══════════════════════════════════════════════════════
+function haversineOffset(lat1,lon1,lat2,lon2){
+  // Returns {eastFt, southFt} — offset of point 2 from point 1
+  const R=20902231; // Earth radius in feet
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLon=(lon2-lon1)*Math.PI/180;
+  const latMid=(lat1+lat2)/2*Math.PI/180;
+  const eastFt=dLon*R*Math.cos(latMid);
+  const southFt=-dLat*R; // positive south in our SVG coord system
+  return{eastFt,southFt};
+}
+
+function gpsToSVG(lat,lon){
+  if(!anchor) return null;
+  const off=haversineOffset(anchor.lat,anchor.lon,lat,lon);
+  return{
+    x: anchor.svgX + off.eastFt*F,
+    y: anchor.svgY + off.southFt*F
+  };
+}
+
+function avgReadings(readings){
+  const lat=readings.reduce((s,r)=>s+r.lat,0)/readings.length;
+  const lon=readings.reduce((s,r)=>s+r.lon,0)/readings.length;
+  const acc=readings.reduce((s,r)=>s+r.acc,0)/readings.length;
+  return{lat,lon,acc};
+}
+
+function accColor(acc){
+  if(acc<=4) return '#3ecf8e';
+  if(acc<=8) return '#f5a623';
+  return '#e8445a';
+}
+function accWidth(acc){
+  // 100% at 1m, 0% at 20m+
+  return Math.max(0,Math.min(100,(20-acc)/19*100));
+}
+
+// ═══════════════════════════════════════════════════════
+// ANCHOR FLOW
+// ═══════════════════════════════════════════════════════
+let watchId=null;
+
+function startAnchor(){
+  anchorReadings=[];
+  document.getElementById('anchor-avg').classList.add('active');
+  document.getElementById('anchor-btn').disabled=true;
+  document.getElementById('anchor-dot').className='anchor-dot pulse';
+  document.getElementById('anchor-label').textContent='Averaging GPS readings…';
+
+  watchId=navigator.geolocation.watchPosition(pos=>{
+    anchorReadings.push({lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy});
+    const n=anchorReadings.length;
+    const avgAcc=(anchorReadings.reduce((s,r)=>s+r.acc,0)/n).toFixed(1);
+    document.getElementById('anchor-count').textContent=n;
+    document.getElementById('anchor-acc-live').textContent=`accuracy: ±${avgAcc}m`;
+    document.getElementById('anchor-prog').style.width=`${Math.min(100,n/ANCHOR_TARGET*100)}%`;
+    // Live accuracy meter
+    document.getElementById('acc-fill').style.width=accWidth(pos.coords.accuracy)+'%';
+    document.getElementById('acc-fill').style.background=accColor(pos.coords.accuracy);
+    document.getElementById('acc-label').textContent=`GPS accuracy: ±${pos.coords.accuracy.toFixed(1)}m`;
+    if(n>=ANCHOR_TARGET) stopAnchor();
+  },{enableHighAccuracy:true,timeout:30000,maximumAge:0},{enableHighAccuracy:true});
+}
+
+function stopAnchor(){
+  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}
+  if(anchorReadings.length<3){
+    alert('Not enough GPS readings. Try again in a more open area.');
+    document.getElementById('anchor-btn').disabled=false;
+    document.getElementById('anchor-avg').classList.remove('active');
+    document.getElementById('anchor-dot').className='anchor-dot';
+    return;
+  }
+  const avg=avgReadings(anchorReadings);
+  anchor={lat:avg.lat,lon:avg.lon,accuracy:avg.acc,
+    svgX:POWBOX_SVG.x, svgY:POWBOX_SVG.y};
+  const n=anchorReadings.length;
+  document.getElementById('anchor-avg').classList.remove('active');
+  document.getElementById('anchor-btn').disabled=false;
+  document.getElementById('anchor-btn').textContent='🔄 Re-Anchor';
+  document.getElementById('anchor-dot').className='anchor-dot good';
+  document.getElementById('anchor-label').textContent=`Anchor set (${n} readings)`;
+  document.getElementById('anchor-sub').textContent=`±${avg.acc.toFixed(1)}m · ${avg.lat.toFixed(6)}, ${avg.lon.toFixed(6)}`;
+  document.getElementById('status-anchor').textContent=`±${avg.acc.toFixed(1)}m`;
+  document.getElementById('record-btn').disabled=false;
+  document.getElementById('sv-no-anchor').style.display='none';
+  // Update anchor summary in map view
+  document.getElementById('anchor-summary').innerHTML=`<div class="cd" style="font-size:9px">Lat: ${avg.lat.toFixed(7)}<br>Lon: ${avg.lon.toFixed(7)}<br>Acc: ±${avg.acc.toFixed(1)}m<br>Readings: ${n}</div>`;
+  saveData();
+  renderItems();
+}
+
+// ═══════════════════════════════════════════════════════
+// RECORD POSITION FLOW
+// ═══════════════════════════════════════════════════════
+function startRecording(){
+  if(!anchor){alert('Set anchor point first!');return;}
+  recordReadings=[];
+  document.getElementById('record-avg').classList.add('active');
+  document.getElementById('record-btn').disabled=true;
+
+  watchId=navigator.geolocation.watchPosition(pos=>{
+    recordReadings.push({lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy});
+    const n=recordReadings.length;
+    const avgAcc=(recordReadings.reduce((s,r)=>s+r.acc,0)/n).toFixed(1);
+    document.getElementById('record-count').textContent=n;
+    document.getElementById('record-acc-live').textContent=`accuracy: ±${avgAcc}m`;
+    document.getElementById('record-prog').style.width=`${Math.min(100,n/RECORD_TARGET*100)}%`;
+    if(n>=RECORD_TARGET) stopRecording();
+  },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
+}
+
+function stopRecording(){
+  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}
+  if(recordReadings.length<3){
+    alert('Not enough readings. Stand still and try again.');
+    document.getElementById('record-btn').disabled=false;
+    document.getElementById('record-avg').classList.remove('active');
+    return;
+  }
+  const avg=avgReadings(recordReadings);
+  placeAtGPS(avg.lat,avg.lon,avg.acc);
+  document.getElementById('record-avg').classList.remove('active');
+  document.getElementById('record-btn').disabled=false;
+}
+
+function recordManual(){
+  const lat=parseFloat(document.getElementById('manual-lat').value);
+  const lon=parseFloat(document.getElementById('manual-lon').value);
+  if(isNaN(lat)||isNaN(lon)){alert('Enter valid coordinates.');return;}
+  if(!anchor){alert('Set anchor point first.');return;}
+  placeAtGPS(lat,lon,null);
+}
+
+function placeAtGPS(lat,lon,acc){
+  const svgPos=gpsToSVG(lat,lon);
+  if(!svgPos){alert('Set anchor point first.');return;}
+  let label='';
+  if(svPlacing==='head'){
+    const zIdx=zones.findIndex(z=>z.id===selectedZone)+1;
+    const cnt=heads.filter(h=>h.zoneId===selectedZone).length;
+    label=`Z${zIdx}-H${cnt+1}`;
+    heads.push({id:nextHeadId++,x:svgPos.x,y:svgPos.y,zoneId:selectedZone,
+      type:'Rotor',radius:12,label,gps:{lat,lon,acc},notes:''});
+    addLog(`💧 ${label} placed (±${acc?acc.toFixed(1)+'m':'manual'})`);
+  } else {
+    const pt=PLANT_TYPES.find(t=>t.id===selectedPlantType);
+    const cnt=plants.filter(p=>p.typeId===selectedPlantType).length;
+    label=`${pt?pt.abbr:'P'}-${cnt+1}`;
+    plants.push({id:nextPlantId++,x:svgPos.x,y:svgPos.y,typeId:selectedPlantType,
+      label,gps:{lat,lon,acc},notes:''});
+    addLog(`${pt?pt.emoji:'🌿'} ${label} placed (±${acc?acc.toFixed(1)+'m':'manual'})`);
+  }
+  updateStats();updateSidebar();renderItems();
+  saveData();
+  switchView('map');
+  setTimeout(()=>switchView('survey'),100);
+}
+
+function addLog(msg){
+  const log=document.getElementById('sv-log');
+  const d=document.createElement('div');
+  d.textContent=`${new Date().toLocaleTimeString()} — ${msg}`;
+  log.insertBefore(d,log.firstChild);
+}
+
+// ═══════════════════════════════════════════════════════
+// SVG MAP
+// ═══════════════════════════════════════════════════════
+const svg=document.getElementById('lot-svg');
+svg.setAttribute('width',SVG_W);svg.setAttribute('height',SVG_H);
+svg.setAttribute('viewBox',`0 0 ${SVG_W} ${SVG_H}`);
+
+function el(tag,attrs={}){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;}
+function add(par,tag,attrs={},text=''){const e=el(tag,attrs);if(text)e.textContent=text;par.appendChild(e);return e;}
+
+function buildMap(){
+  svg.innerHTML='';
+  const defs=el('defs');
+  const g5=el('pattern',{id:'g5',width:ft(5),height:ft(5),patternUnits:'userSpaceOnUse'});
+  add(g5,'path',{d:`M ${ft(5)} 0 L 0 0 0 ${ft(5)}`,fill:'none',stroke:'#13191f','stroke-width':'0.4'});defs.appendChild(g5);
+  const g10=el('pattern',{id:'g10',width:ft(10),height:ft(10),patternUnits:'userSpaceOnUse'});
+  add(g10,'path',{d:`M ${ft(10)} 0 L 0 0 0 ${ft(10)}`,fill:'none',stroke:'#1c2530','stroke-width':'0.8'});defs.appendChild(g10);
+  svg.appendChild(defs);
+  add(svg,'rect',{width:SVG_W,height:SVG_H,fill:'#070a0e'});
+  const sy=Math.max(oC.y,oD.y);
+  add(svg,'rect',{x:0,y:sy,width:SVG_W,height:SVG_H-sy,fill:'#0c0c18'});
+  add(svg,'text',{x:SVG_W/2,y:sy+ft(12),'text-anchor':'middle',fill:'#1e2038','font-size':ft(7),'font-family':'Space Mono,monospace','font-weight':'700','letter-spacing':'0.18em'},'BLAIRMONT COURT');
+
+  const c1R=40*F,c2R=50*F;
+  const lotPath=`M ${p(oA)} L ${p(oB)} L ${p(oC)} L ${p(oC2)} A ${c2R},${c2R} 0 0,1 ${p(oC1)} A ${c1R},${c1R} 0 0,0 ${p(oD)} Z`;
+  add(svg,'path',{d:lotPath,fill:'#0d1a0f'});
+  const cp=el('clipPath',{id:'lot-clip'});add(cp,'path',{d:lotPath});svg.querySelector('defs').appendChild(cp);
+  const gg=el('g',{'clip-path':'url(#lot-clip)'});
+  add(gg,'rect',{width:SVG_W,height:SVG_H,fill:'url(#g5)'});
+  add(gg,'rect',{width:SVG_W,height:SVG_H,fill:'url(#g10)'});
+  svg.appendChild(gg);
+  add(svg,'path',{d:lotPath,fill:'none',stroke:'#2a7a4a','stroke-width':'1.8'});
+  add(svg,'path',{d:lotPath,fill:'none',stroke:'#3ecf8e','stroke-width':'0.8','stroke-dasharray':'6,3','opacity':'0.6'});
+
+  const hp=`M ${p(ohNW)} L ${p(ohNE)} L ${p(ohSE)} L ${p(ohSW)} Z`;
+  add(svg,'path',{d:hp,fill:'#151e2e',stroke:'#2a3a55','stroke-width':'2'});
+  const hcx=(ohNW.x+ohNE.x+ohSE.x+ohSW.x)/4,hcy=(ohNW.y+ohNE.y+ohSE.y+ohSW.y)/4;
+  const hAng=Math.atan2(ohSW.y-ohNW.y,ohSW.x-ohNW.x)*180/Math.PI;
+  add(svg,'text',{x:hcx,y:hcy-ft(3.5),'text-anchor':'middle',fill:'#405060','font-size':ft(2.8),'font-family':'Space Mono,monospace',transform:`rotate(${hAng},${hcx},${hcy})`},'2-STORY BRICK & VINYL');
+  add(svg,'text',{x:hcx,y:hcy+ft(1),'text-anchor':'middle',fill:'#5a7090','font-size':ft(5.5),'font-family':'Space Mono,monospace','font-weight':'700',transform:`rotate(${hAng},${hcx},${hcy})`},'#12009');
+
+  // Dim lines
+  function dimL(p1,p2,lbl,side,col='#2a5a3a'){
+    const g=el('g');const off=ft(9);
+    const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy);
+    const nx=-dy/len,ny=dx/len,ang=Math.atan2(dy,dx)*180/Math.PI;
+    let lx1,ly1,lx2,ly2,tx,ty,rot=ang;
+    if(side==='above'){lx1=p1.x+nx*off;ly1=p1.y+ny*off;lx2=p2.x+nx*off;ly2=p2.y+ny*off;tx=(lx1+lx2)/2+nx*ft(2);ty=(ly1+ly2)/2+ny*ft(2);}
+    else if(side==='right'){lx1=p1.x+nx*off;ly1=p1.y+ny*off;lx2=p2.x+nx*off;ly2=p2.y+ny*off;tx=(lx1+lx2)/2+nx*ft(3.5);ty=(ly1+ly2)/2+ny*ft(3.5);}
+    else{lx1=p1.x-nx*off;ly1=p1.y-ny*off;lx2=p2.x-nx*off;ly2=p2.y-ny*off;tx=(lx1+lx2)/2-nx*ft(3.5);ty=(ly1+ly2)/2-ny*ft(3.5);rot=ang+180;}
+    add(g,'line',{x1:lx1,y1:ly1,x2:lx2,y2:ly2,stroke:col,'stroke-width':'0.8'});
+    const t=el('text',{x:tx,y:ty,'text-anchor':'middle',fill:col,'font-size':ft(2.4),'font-family':'Space Mono,monospace',transform:`rotate(${rot},${tx},${ty})`});
+    t.textContent=lbl;g.appendChild(t);svg.appendChild(g);
+  }
+  dimL(oA,oB,"S 47°30' W  92.00'",'above');
+  dimL(oB,oC,"N 42°30' W  150.00'",'right');
+  dimL(oA,oD,"S 42°30' E  133.47'",'left');
+
+  // Survey markers
+  add(svg,'rect',{x:POWBOX_SVG.x-ft(1.5),y:POWBOX_SVG.y-ft(1.5),width:ft(3),height:ft(3),fill:'#f5a623'});
+  add(svg,'text',{x:POWBOX_SVG.x+ft(2.5),y:POWBOX_SVG.y+ft(1),fill:'#b07818','font-size':ft(2.3),'font-family':'Space Mono,monospace'},'POW.BOX ← ANCHOR');
+  add(svg,'circle',{cx:oA.x,cy:oA.y,r:4,fill:'#3ecf8e','fill-opacity':'0.9'});
+  add(svg,'circle',{cx:oB.x,cy:oB.y,r:4,fill:'#3ecf8e','fill-opacity':'0.9'});
+
+  // Lot labels
+  add(svg,'text',{x:(oA.x+oB.x)/2,y:oA.y+ft(11),'text-anchor':'middle',fill:'#1a3520','font-size':ft(10),'font-family':'Space Mono,monospace','font-weight':'700','letter-spacing':'0.12em'},'LOT 25');
+  add(svg,'text',{x:oA.x-ft(8),y:oA.y+ft(18),'text-anchor':'middle',fill:'#162018','font-size':ft(4),'font-family':'Space Mono,monospace'},'LOT 26');
+  add(svg,'text',{x:oB.x+ft(8),y:oB.y+ft(18),'text-anchor':'middle',fill:'#162018','font-size':ft(4),'font-family':'Space Mono,monospace'},'LOT 24');
+  add(svg,'text',{x:(oA.x+oB.x)/2,y:oA.y-ft(7),'text-anchor':'middle',fill:'#162018','font-size':ft(4),'font-family':'Space Mono,monospace'},'LOT 14');
+
+  // Compass
+  const cx=SVG_W-45,cy=45,cr=18;
+  add(svg,'circle',{cx,cy,r:cr,fill:'none',stroke:'#1a3a2a','stroke-width':'1'});
+  add(svg,'line',{x1:cx,y1:cy+cr*.65,x2:cx,y2:cy-cr*.65,stroke:'#3ecf8e','stroke-width':'1.5'});
+  add(svg,'polygon',{points:`${cx},${cy-cr*.65} ${cx-3},${cy-cr*.25} ${cx+3},${cy-cr*.25}`,fill:'#3ecf8e'});
+  add(svg,'text',{x:cx,y:cy-cr-4,'text-anchor':'middle',fill:'#3ecf8e','font-size':'9','font-family':'Space Mono,monospace','font-weight':'700'},'N');
+
+  renderItems();
+}
+
+function renderItems(){
+  document.querySelectorAll('.s-head,.s-plant,.s-anchor').forEach(e=>e.remove());
+  if(layerAnchor&&anchor) renderAnchor();
+  if(layerHeads) renderHeads();
+  if(layerPlants) renderPlants();
+}
+
+function renderAnchor(){
+  const g=el('g');g.classList.add('s-anchor');
+  add(g,'circle',{cx:POWBOX_SVG.x,cy:POWBOX_SVG.y,r:8,fill:'none',stroke:'#f5a623','stroke-width':'2','stroke-dasharray':'4,2'});
+  add(g,'circle',{cx:POWBOX_SVG.x,cy:POWBOX_SVG.y,r:3,fill:'#f5a623'});
+  add(g,'text',{x:POWBOX_SVG.x,y:POWBOX_SVG.y-12,'text-anchor':'middle',fill:'#f5a623','font-size':ft(2.5),'font-family':'Space Mono,monospace'},'GPS ANCHOR');
+  svg.appendChild(g);
+}
+
+function renderHeads(){
+  heads.forEach(h=>{
+    const zone=zones.find(z=>z.id===h.zoneId);const color=zone?zone.color:'#888';
+    const g=el('g');g.classList.add('s-head');
+    const isSel=selectedType==='head'&&selectedId===h.id;
+    if(h.radius>0) add(g,'circle',{cx:h.x,cy:h.y,r:ft(h.radius),fill:color,'fill-opacity':'0.07',stroke:color,'stroke-width':'0.6','stroke-opacity':'0.25','stroke-dasharray':'3,3'});
+    add(g,'circle',{cx:h.x,cy:h.y,r:6,fill:color,'fill-opacity':isSel?'1':'0.8',stroke:isSel?'#fff':'#000','stroke-width':isSel?'2':'1'});
+    add(g,'circle',{cx:h.x,cy:h.y,r:2.5,fill:'rgba(0,0,0,0.5)'});
+    if(h.gps) add(g,'circle',{cx:h.x+6,cy:h.y-6,r:3,fill:'#f5a623','fill-opacity':'0.9'});
+    const lbl=el('text',{x:h.x,y:h.y-ft(3.5),'text-anchor':'middle',fill:color,'font-size':ft(2.8),'font-family':'Space Mono,monospace','paint-order':'stroke',stroke:'#070a0e','stroke-width':'3','stroke-linejoin':'round'});
+    lbl.textContent=h.label;g.appendChild(lbl);
+    g.addEventListener('click',e=>{e.stopPropagation();if(mapMode==='select')selectItem('head',h.id);});
+    svg.appendChild(g);
+  });
+}
+
+function renderPlants(){
+  plants.forEach(pl=>{
+    const pt=PLANT_TYPES.find(t=>t.id===pl.typeId);
+    const color=pt?pt.color:'#888',emoji=pt?pt.emoji:'🌿';
+    const g=el('g');g.classList.add('s-plant');
+    const isSel=selectedType==='plant'&&selectedId===pl.id;
+    const r=isSel?10:8;
+    const pts=Array.from({length:6},(_,i)=>{const a=i*60*Math.PI/180;return`${pl.x+r*Math.cos(a)},${pl.y+r*Math.sin(a)}`;}).join(' ');
+    add(g,'polygon',{points:pts,fill:color,'fill-opacity':'0.2',stroke:color,'stroke-width':isSel?'2.5':'1.5'});
+    if(pl.gps) add(g,'circle',{cx:pl.x+r,cy:pl.y-r,r:3,fill:'#f5a623','fill-opacity':'0.9'});
+    const et=el('text',{x:pl.x,y:pl.y+3,'text-anchor':'middle','dominant-baseline':'middle','font-size':isSel?'11':'9'});
+    et.textContent=emoji;g.appendChild(et);
+    const lbl=el('text',{x:pl.x,y:pl.y-ft(3.5),'text-anchor':'middle',fill:color,'font-size':ft(2.5),'font-family':'Space Mono,monospace','paint-order':'stroke',stroke:'#070a0e','stroke-width':'3','stroke-linejoin':'round'});
+    lbl.textContent=pl.label;g.appendChild(lbl);
+    g.addEventListener('click',e=>{e.stopPropagation();if(mapMode==='select')selectItem('plant',pl.id);});
+    svg.appendChild(g);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// MAP INTERACTION
+// ═══════════════════════════════════════════════════════
+const container=document.getElementById('map-container');
+const wrap=document.getElementById('canvas-wrap');
+container.addEventListener('mousedown',e=>{if(mapMode!=='pan')return;isPanning=true;panStart={x:e.clientX-panX,y:e.clientY-panY};container.style.cursor='grabbing';});
+window.addEventListener('mousemove',e=>{
+  if(isPanning){panX=e.clientX-panStart.x;panY=e.clientY-panStart.y;applyTransform();}
+  if(document.getElementById('view-map').classList.contains('active')){
+    const r=svg.getBoundingClientRect();
+    const x=(e.clientX-r.left)/mapScale,y=(e.clientY-r.top)/mapScale;
+    document.getElementById('status-coords').textContent=`${(x/F).toFixed(1)}ft E · ${(y/F).toFixed(1)}ft S`;
+  }
+});
+window.addEventListener('mouseup',()=>{isPanning=false;container.style.cursor='';});
+container.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.1:0.9);},{passive:false});
+// Touch pan/pinch
+let lastTouchDist=null;
+container.addEventListener('touchstart',e=>{
+  if(e.touches.length===1&&mapMode==='pan'){isPanning=true;panStart={x:e.touches[0].clientX-panX,y:e.touches[0].clientY-panY};}
+  if(e.touches.length===2){lastTouchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);}
+},{passive:true});
+container.addEventListener('touchmove',e=>{
+  if(e.touches.length===1&&isPanning){panX=e.touches[0].clientX-panStart.x;panY=e.touches[0].clientY-panStart.y;applyTransform();}
+  if(e.touches.length===2&&lastTouchDist){
+    const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    zoom(d/lastTouchDist);lastTouchDist=d;
+  }
+},{passive:true});
+container.addEventListener('touchend',()=>{isPanning=false;lastTouchDist=null;});
+
+function zoom(f){mapScale=Math.min(6,Math.max(0.15,mapScale*f));applyTransform();}
+function applyTransform(){wrap.style.transform=`translate(calc(-50% + ${panX}px),calc(-50% + ${panY}px)) scale(${mapScale})`;}
+
+function setMapMode(m){
+  mapMode=m;
+  ['pan','select'].forEach(x=>document.getElementById('map-mode-'+x).classList.toggle('on',x===m));
+  container.style.cursor=m==='pan'?'grab':'default';
+}
+
+// ═══════════════════════════════════════════════════════
+// SELECTION & PANELS
+// ═══════════════════════════════════════════════════════
+function selectItem(type,id){
+  selectedType=type;selectedId=id;renderItems();
+  if(type==='head'){const h=heads.find(x=>x.id===id);if(h)showHeadPanel(h);}
+  else{const pl=plants.find(x=>x.id===id);if(pl)showPlantPanel(pl);}
+}
+function deleteHead(id){heads=heads.filter(h=>h.id!==id);if(selectedType==='head'&&selectedId===id)clearSel();renderItems();updateSidebar();updateStats();saveData();}
+function deletePlant(id){plants=plants.filter(p=>p.id!==id);if(selectedType==='plant'&&selectedId===id)clearSel();renderItems();updateSidebar();updateStats();saveData();}
+function clearSel(){selectedType=null;selectedId=null;document.getElementById('sel-content').className='nos';document.getElementById('sel-content').textContent='Tap an item on the map to view details.';}
+function updateHead(id,key,val){const h=heads.find(x=>x.id===id);if(!h)return;h[key]=val;renderItems();updateSidebar();showHeadPanel(h);saveData();}
+function updatePlant(id,key,val){const pl=plants.find(x=>x.id===id);if(!pl)return;pl[key]=val;renderItems();updateSidebar();showPlantPanel(pl);saveData();}
+
+function showHeadPanel(h){
+  const zone=zones.find(z=>z.id===h.zoneId),color=zone?zone.color:'#888';
+  const sel=document.getElementById('sel-content');sel.className='';
+  sel.innerHTML=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+    <div style="width:8px;height:8px;border-radius:50%;background:${color}"></div>
+    <span style="font-family:'Space Mono',monospace;font-size:10px;color:${color}">💧 ${h.label}</span></div>
+  <div class="fg"><label>Label</label><input value="${h.label}" onchange="updateHead(${h.id},'label',this.value)"></div>
+  <div class="fg"><label>Zone</label><select onchange="updateHead(${h.id},'zoneId',+this.value)">${zones.map(z=>`<option value="${z.id}" ${z.id===h.zoneId?'selected':''}>${z.name}</option>`).join('')}</select></div>
+  <div class="fg"><label>Type</label><select onchange="updateHead(${h.id},'type',this.value)">${HEAD_TYPES.map(t=>`<option ${t===h.type?'selected':''}>${t}</option>`).join('')}</select></div>
+  <div class="fg"><label>Radius (ft)</label><input type="number" value="${h.radius}" min="1" max="30" onchange="updateHead(${h.id},'radius',+this.value)"></div>
+  <div class="fg"><label>Notes</label><textarea onchange="updateHead(${h.id},'notes',this.value)">${h.notes||''}</textarea></div>
+  <div class="fg"><label>Position</label><div class="cd">${(h.x/F).toFixed(1)}ft E · ${(h.y/F).toFixed(1)}ft S</div></div>
+  ${h.gps?`<div class="fg"><label>GPS ${h.gps.acc?`±${h.gps.acc.toFixed(1)}m`:''}</label><div class="cd">${h.gps.lat.toFixed(7)}, ${h.gps.lon.toFixed(7)}</div></div>`:''}
+  <button class="hbtn danger" style="width:100%;margin-top:8px;padding:7px;" onclick="deleteHead(${h.id})">Delete</button>`;
+}
+
+function showPlantPanel(pl){
+  const pt=PLANT_TYPES.find(t=>t.id===pl.typeId),color=pt?pt.color:'#888';
+  const sel=document.getElementById('sel-content');sel.className='';
+  sel.innerHTML=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+    <div style="width:8px;height:8px;border-radius:50%;background:${color}"></div>
+    <span style="font-family:'Space Mono',monospace;font-size:10px;color:${color}">${pt?pt.emoji:'🌿'} ${pl.label}</span></div>
+  <div class="fg"><label>Label</label><input value="${pl.label}" onchange="updatePlant(${pl.id},'label',this.value)"></div>
+  <div class="fg"><label>Type</label><select onchange="updatePlant(${pl.id},'typeId',this.value)">${PLANT_TYPES.map(t=>`<option value="${t.id}" ${t.id===pl.typeId?'selected':''}>${t.emoji} ${t.name}</option>`).join('')}</select></div>
+  <div class="fg"><label>Notes</label><textarea onchange="updatePlant(${pl.id},'notes',this.value)">${pl.notes||''}</textarea></div>
+  ${pt&&pt.care?`<div class="care-tip">🌱 ${pt.care}</div>`:''}
+  ${pt&&pt.warn?`<div class="care-warn">⚠️ ${pt.warn}</div>`:''}
+  ${pt?`<div class="fg"><label>Prune</label><div class="cd" style="font-size:9px">${pt.prune}</div></div>`:''}
+  <div class="fg"><label>Position</label><div class="cd">${(pl.x/F).toFixed(1)}ft E · ${(pl.y/F).toFixed(1)}ft S</div></div>
+  ${pl.gps?`<div class="fg"><label>GPS ${pl.gps.acc?`±${pl.gps.acc.toFixed(1)}m`:''}</label><div class="cd">${pl.gps.lat.toFixed(7)}, ${pl.gps.lon.toFixed(7)}</div></div>`:''}
+  <button class="hbtn danger" style="width:100%;margin-top:8px;padding:7px;" onclick="deletePlant(${pl.id})">Delete</button>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// UI / SIDEBAR
+// ═══════════════════════════════════════════════════════
+function switchView(v){
+  ['map','survey'].forEach(x=>{
+    document.getElementById('view-'+x).classList.toggle('active',x===v);
+    document.getElementById('vb-'+x).classList.toggle('active',x===v);
+  });
+}
+function sbTab(t){
+  ['zones','plants','list'].forEach(x=>{
+    document.getElementById('sbt-'+x).classList.toggle('active',x===t);
+    document.getElementById('sbp-'+x).classList.toggle('active',x===t);
+  });
+}
+function toggleLayer(l){
+  if(l==='heads')layerHeads=!layerHeads;
+  else if(l==='plants')layerPlants=!layerPlants;
+  else layerAnchor=!layerAnchor;
+  document.getElementById('layer-'+l).classList.toggle('on',l==='heads'?layerHeads:l==='plants'?layerPlants:layerAnchor);
+  renderItems();
+}
+function setSvPlacing(p){
+  svPlacing=p;
+  document.getElementById('sv-placing-head').className='big-btn '+(p==='head'?'green':'outline');
+  document.getElementById('sv-placing-plant').className='big-btn '+(p==='plant'?'green':'outline');
+  document.getElementById('zone-picker-wrap').style.display=p==='head'?'block':'none';
+  document.getElementById('plant-picker-wrap').style.display=p==='plant'?'block':'none';
+}
+function updateZoneList(){
+  const list=document.getElementById('zone-list');list.innerHTML='';
+  zones.forEach(z=>{
+    const c=heads.filter(h=>h.zoneId===z.id).length;
+    const d=document.createElement('div');d.className='zi'+(z.id===selectedZone?' sel':'');d.style.color=z.color;
+    d.innerHTML=`<div class="zd" style="background:${z.color}"></div><span class="zone-name-label" style="flex:1;font-size:11px">${z.name}</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-right:2px">${c}</span><button class="rename-btn" data-zone-id="${z.id}" onclick="event.stopPropagation();renameZone(${z.id})" title="Rename">✎</button>`;
+    d.onclick=()=>{selectedZone=z.id;updateZoneList();buildZonePicker();};list.appendChild(d);
+  });
+}
+
+function renameZone(id){
+  const z=zones.find(x=>x.id===id);if(!z)return;
+  // Find the zone row and replace name span with input
+  const rows=document.querySelectorAll('#zone-list .zi');
+  rows.forEach(row=>{
+    const btn=row.querySelector('.rename-btn');
+    if(!btn||btn.getAttribute('data-zone-id')!=id) return;
+    const nameSpan=row.querySelector('.zone-name-label');
+    if(!nameSpan||nameSpan.querySelector('input')) return; // already editing
+    const cur=nameSpan.textContent;
+    nameSpan.innerHTML=`<input class="zone-name-input" value="${cur}" style="background:var(--bg);border:1px solid var(--accent);border-radius:4px;color:var(--text);font-size:11px;padding:2px 5px;width:100%;outline:none;" onclick="event.stopPropagation()">`;
+    const inp=nameSpan.querySelector('input');
+    inp.focus();inp.select();
+    function commit(){
+      const val=inp.value.trim();
+      if(val&&val!==cur) z.name=val;
+      updateZoneList();buildZonePicker();updateStats();saveData();
+    }
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();commit();}
+      if(e.key==='Escape'){updateZoneList();}
+      e.stopPropagation();
+    });
+    inp.addEventListener('blur',commit);
+  });
+}
+function updatePlantTypeList(){
+  const list=document.getElementById('plant-type-list');list.innerHTML='';
+  PLANT_TYPES.forEach(pt=>{
+    const c=plants.filter(p=>p.typeId===pt.id).length;
+    const d=document.createElement('div');d.className='pti'+(pt.id===selectedPlantType?' sel':'');d.style.color=pt.color;
+    d.innerHTML=`<span style="font-size:13px">${pt.emoji}</span><span style="flex:1;font-size:10px">${pt.name}</span><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${c}</span>`;
+    d.onclick=()=>{selectedPlantType=pt.id;updatePlantTypeList();buildPlantPicker();};list.appendChild(d);
+  });
+}
+function updateItemList(){
+  const list=document.getElementById('item-list');list.innerHTML='';
+  heads.forEach(h=>{
+    const zone=zones.find(z=>z.id===h.zoneId),color=zone?zone.color:'#888';
+    const d=document.createElement('div');d.className='ie'+(selectedType==='head'&&selectedId===h.id?' sel':'');
+    d.innerHTML=`<span style="color:${color}">💧</span><div class="ie-info" style="flex:1"><div class="ie-lbl" style="color:${color}">${h.label}</div><div class="ie-sub">${h.type}${h.gps?' 📍':''}</div></div><button class="del" onclick="event.stopPropagation();deleteHead(${h.id})">×</button>`;
+    d.onclick=()=>{selectItem('head',h.id);};list.appendChild(d);
+  });
+  plants.forEach(pl=>{
+    const pt=PLANT_TYPES.find(t=>t.id===pl.typeId),color=pt?pt.color:'#888';
+    const d=document.createElement('div');d.className='ie'+(selectedType==='plant'&&selectedId===pl.id?' sel':'');
+    d.innerHTML=`<span>${pt?pt.emoji:'🌿'}</span><div class="ie-info" style="flex:1"><div class="ie-lbl" style="color:${color}">${pl.label}</div><div class="ie-sub">${pt?pt.abbr:'Plant'}${pl.gps?' 📍':''}</div></div><button class="del" onclick="event.stopPropagation();deletePlant(${pl.id})">×</button>`;
+    d.onclick=()=>{selectItem('plant',pl.id);};list.appendChild(d);
+  });
+}
+function updateSidebar(){updateZoneList();updatePlantTypeList();updateItemList();}
+
+function buildZonePicker(){
+  const g=document.getElementById('zone-picker');g.innerHTML='';
+  zones.forEach(z=>{
+    const c=heads.filter(h=>h.zoneId===z.id).length;
+    const d=document.createElement('div');d.className='pick-btn'+(z.id===selectedZone?' sel':'');
+    d.style.color=z.color;d.style.borderColor=z.id===selectedZone?z.color:'';
+    d.innerHTML=`<span class="pick-emoji">💧</span><span class="pick-name">${z.name}</span><span class="pick-count">${c} head${c!==1?'s':''}</span>`;
+    d.onclick=()=>{selectedZone=z.id;buildZonePicker();updateZoneList();};g.appendChild(d);
+  });
+}
+function buildPlantPicker(){
+  const g=document.getElementById('plant-picker');g.innerHTML='';
+  PLANT_TYPES.forEach(pt=>{
+    const c=plants.filter(p=>p.typeId===pt.id).length;
+    const d=document.createElement('div');d.className='pick-btn'+(pt.id===selectedPlantType?' sel':'');
+    d.style.color=pt.color;d.style.borderColor=pt.id===selectedPlantType?pt.color:'';
+    d.style.display='flex';d.style.alignItems='center';d.style.gap='8px';d.style.textAlign='left';
+    d.innerHTML=`<span style="font-size:18px">${pt.emoji}</span><div><span class="pick-name">${pt.name}</span><span class="pick-count">${c} placed</span></div>`;
+    d.onclick=()=>{selectedPlantType=pt.id;buildPlantPicker();updatePlantTypeList();};g.appendChild(d);
+  });
+}
+
+function updateStats(){
+  const s=document.getElementById('stats');
+  const zl=zones.map(z=>{const c=heads.filter(h=>h.zoneId===z.id).length;return`<div style="color:${z.color}">${z.name}: ${c}</div>`;}).join('');
+  const pl=PLANT_TYPES.filter(pt=>plants.some(p=>p.typeId===pt.id)).map(pt=>{const c=plants.filter(p=>p.typeId===pt.id).length;return`<div style="color:${pt.color}">${pt.emoji} ${pt.abbr}: ${c}</div>`;}).join('');
+  s.innerHTML=zl+(pl?`<div style="margin-top:4px;font-size:9px;color:var(--muted)">PLANTS:</div>${pl}`:'')
+    +`<div style="margin-top:4px;color:var(--muted)">Total: ${heads.length} heads, ${plants.length} plants</div>`;
+  document.getElementById('status-heads').textContent=heads.length;
+  document.getElementById('status-plants').textContent=plants.length;
+}
+
+function addZone(){const name=prompt('Zone name:',`Zone ${nextZoneId}`);if(!name)return;zones.push({id:nextZoneId,name,color:ZONE_COLORS[(nextZoneId-1)%ZONE_COLORS.length]});nextZoneId++;updateSidebar();buildZonePicker();updateStats();}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════
+function exportJSON(){
+  const data={property:{address:'12009 Blairmont Court',lot:'25',block:'B',county:'Henrico',state:'VA',scale_px_per_ft:F,survey_date:'2026-02-16'},
+    anchor:anchor?{lat:anchor.lat,lon:anchor.lon,accuracy:anchor.accuracy,reference:'Power Box — left boundary 126ft from NW corner'}:null,
+    zones,
+    heads:heads.map(h=>({...h,survey_ft:{east:+(h.x/F).toFixed(2),south:+(h.y/F).toFixed(2)}})),
+    plants:plants.map(pl=>{const pt=PLANT_TYPES.find(t=>t.id===pl.typeId);return{...pl,plant_name:pt?pt.name:'Unknown',survey_ft:{east:+(pl.x/F).toFixed(2),south:+(pl.y/F).toFixed(2)}};})
+  };
+  dl('lot25-yard-map.json',JSON.stringify(data,null,2));
+}
+function exportHA(){
+  const hEls=heads.map(h=>{const zIdx=zones.findIndex(z=>z.id===h.zoneId)+1;return`  - type: state-badge\n    entity: switch.rachio_zone_${zIdx}\n    title: "${h.label}"\n    style:\n      left: "${((h.x/SVG_W)*100).toFixed(1)}%"\n      top: "${((h.y/SVG_H)*100).toFixed(1)}%"\n      transform: translate(-50%,-50%)`;}).join('\n');
+  const pEls=plants.map(pl=>{const pt=PLANT_TYPES.find(t=>t.id===pl.typeId);return`  - type: custom:button-card\n    name: "${pl.label}"\n    # ${pt?pt.name:''}\n    style:\n      left: "${((pl.x/SVG_W)*100).toFixed(1)}%"\n      top: "${((pl.y/SVG_H)*100).toFixed(1)}%"\n      transform: translate(-50%,-50%)`;}).join('\n');
+  dl('lot25-yard-ha.yaml',`# HA picture-elements — Lot 25\ntype: picture-elements\nimage: /local/lot25-yard.svg\nelements:\n${hEls}\n${pEls}\n  - type: state-label\n    entity: sensor.ecowitt_ws90_rain_rate\n    style: {left:"88%",top:"5%",color:"#5b8dee"}\n`);
+}
+function dl(fn,c){const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(c);a.download=fn;a.click();}
+function clearAll(){if(!confirm('Delete everything? This cannot be undone.'))return;heads=[];plants=[];anchor=null;nextHeadId=1;nextPlantId=1;selectedType=null;selectedId=null;renderItems();updateSidebar();buildZonePicker();buildPlantPicker();updateStats();clearSel();saveData();showSaveStatus('Cleared');}
+
+// ═══════════════════════════════════════════════════════
+// PERSISTENT STORAGE
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'lot25-yard-map-v1';
+
+async function saveData() {
+  try {
+    const data = {
+      heads, plants, anchor,
+      zones: zones.filter(z=>z.id>=7), // only save custom zones; built-ins are hardcoded
+      nextHeadId, nextPlantId, nextZoneId,
+      savedAt: new Date().toISOString()
+    };
+    await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+    showSaveStatus('✓ Saved');
+  } catch(e) {
+    showSaveStatus('⚠ Save failed');
+    console.error('Storage save error:', e);
+  }
+}
+
+async function loadData() {
+  let result;
+  try {
+    result = await window.storage.get(STORAGE_KEY);
+  } catch(e) {
+    // Key doesn't exist yet or server error — treat as no data
+    showSaveStatus('No saved data yet');
+    return;
+  }
+  try {
+    if (!result || !result.value) { showSaveStatus('No saved data yet'); return; }
+    const data = JSON.parse(result.value);
+    heads = data.heads || [];
+    plants = data.plants || [];
+    anchor = data.anchor || null;
+    nextHeadId = data.nextHeadId || (heads.length ? Math.max(...heads.map(h=>h.id))+1 : 1);
+    nextPlantId = data.nextPlantId || (plants.length ? Math.max(...plants.map(p=>p.id))+1 : 1);
+    // Merge any custom zones
+    if (data.zones && data.zones.length) {
+      data.zones.forEach(z => { if (!zones.find(x=>x.id===z.id)) zones.push(z); });
+      nextZoneId = data.nextZoneId || nextZoneId;
+    }
+    // Restore anchor UI if we have one
+    if (anchor) {
+      document.getElementById('anchor-dot').className = 'anchor-dot good';
+      document.getElementById('anchor-label').textContent = 'Anchor restored from last session';
+      document.getElementById('anchor-sub').textContent = `±${anchor.accuracy.toFixed(1)}m · ${anchor.lat.toFixed(6)}, ${anchor.lon.toFixed(6)}`;
+      document.getElementById('anchor-btn').textContent = '🔄 Re-Anchor';
+      document.getElementById('record-btn').disabled = false;
+      document.getElementById('sv-no-anchor').style.display = 'none';
+      document.getElementById('status-anchor').textContent = `±${anchor.accuracy.toFixed(1)}m`;
+      document.getElementById('anchor-summary').innerHTML = `<div class="cd" style="font-size:9px">Lat: ${anchor.lat.toFixed(7)}<br>Lon: ${anchor.lon.toFixed(7)}<br>Acc: ±${anchor.accuracy.toFixed(1)}m<br><span style="color:var(--accent)">Restored ✓</span></div>`;
+    }
+    const saved = data.savedAt ? new Date(data.savedAt).toLocaleString() : 'unknown';
+    showSaveStatus(`Loaded — last saved ${saved}`);
+  } catch(e) {
+    showSaveStatus('Load parse error');
+    console.error('Storage parse error:', e);
+  }
+}
+
+let saveStatusTimer = null;
+function showSaveStatus(msg) {
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(saveStatusTimer);
+  saveStatusTimer = setTimeout(() => { el.style.opacity = '0.4'; }, 3000);
+}
+
+// Auto-save after every placement
+const _origPlaceAtGPS = placeAtGPS;
+// We hook into placeAtGPS by wrapping the save call at end of that function.
+// Instead, we'll call saveData() at the end of placeAtGPS directly (see below).
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+buildMap();updateSidebar();buildZonePicker();buildPlantPicker();updateStats();applyTransform();
+loadData().then(() => { renderItems(); updateSidebar(); buildZonePicker(); buildPlantPicker(); updateStats(); });
+</script>
+</body>
+</html>
