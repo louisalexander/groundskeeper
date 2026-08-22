@@ -28,7 +28,7 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Cloudflare secrets not set — skipping deploy (this is expected until configured)."
           fi
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.guard.outputs.ready == 'true'
       - uses: actions/setup-node@v6
         if: steps.guard.outputs.ready == 'true'
