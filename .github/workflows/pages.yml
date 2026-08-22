@@ -1,7 +1,8 @@
 name: Pages
 
-# Build the Vite app and publish it to GitHub Pages (preview hosting).
-# Project pages are served from /groundskeeper/, so the build base is set to match.
+# Build the Vite app plus the rendered docs site and publish both to GitHub Pages
+# (preview hosting). Project pages are served from /groundskeeper/, so the build
+# base is set to match; the docs land at /groundskeeper/docs/.
 
 on:
   push:
@@ -29,6 +30,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build -- --base=/groundskeeper/
+      - name: Render docs site into dist/docs
+        run: npm run build:docs
+        env:
+          DOCS_BASE: /groundskeeper/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v5
         with:

@@ -10,7 +10,7 @@
 ![Leaflet](https://img.shields.io/badge/map-Leaflet-199900?logo=leaflet&logoColor=fff)
 ![No build framework](https://img.shields.io/badge/framework-none-blue)
 
-**[🌐 Live demo](https://louisalexander.github.io/groundskeeper/)** · **[📐 Design spec](docs/superpowers/specs/2026-06-05-groundskeeper-design.md)** · **[🗺 Roadmap](#-roadmap)**
+**[🌐 Live demo](https://louisalexander.github.io/groundskeeper/)** · **[📚 Docs](https://louisalexander.github.io/groundskeeper/docs/)** · **[📐 Design spec](https://louisalexander.github.io/groundskeeper/docs/superpowers/specs/2026-06-05-groundskeeper-design.html)** · **[🗺 Roadmap](#-roadmap)**
 
 </div>
 
@@ -80,10 +80,14 @@ npm install
 npm run dev      # local dev server (use this for GPS — needs http://localhost or HTTPS)
 npm test         # run the Vitest unit suite
 npm run build    # production build → dist/
+npm run build:docs  # render docs/*.md into dist/docs/ (the published docs site)
 npm run preview  # preview the production build
 ```
 
 > **GPS note:** `navigator.geolocation` only works over **HTTPS** or **`http://localhost`** — never from a `file://` path.
+
+The design spec and milestone plans in `docs/` are rendered to a small static site on every push to
+`main` and published alongside the demo at **[/groundskeeper/docs/](https://louisalexander.github.io/groundskeeper/docs/)**.
 
 ---
 
@@ -146,6 +150,7 @@ groundskeeper/
 ├── public/basemap/       # bundled georeferenced orthophoto
 ├── data/                 # survey-geometry.json, plant-care.json
 ├── test/                 # Vitest unit tests
+├── scripts/build-docs.mjs  # renders docs/*.md → the published docs site
 └── docs/                 # survey plat, design specs & plans
 ```
 

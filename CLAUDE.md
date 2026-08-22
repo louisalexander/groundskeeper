@@ -38,6 +38,7 @@ npm run dev      # dev server — use this for GPS (geolocation needs HTTPS or h
 npm test         # Vitest unit suite (CI runs this)
 npm run test:watch
 npm run build    # production build → dist/
+npm run build:docs # render docs/**/*.md → dist/docs/ (published to Pages with the app)
 npm run preview  # serve the production build
 ```
 
